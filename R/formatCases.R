@@ -56,6 +56,7 @@ if(!is.null(ageBreaks)){
 
 # aggregate, if necessary
 if(!is.null(aggregate.by) & length(aggregate.by)) {
+   casedata$cases <- 1
    popa = aggregate(casedata$cases, casedata[, aggregate.by, drop=FALSE], sum)
    names(popa)[names(popa)=="x"] = "CASES"
    casedata <- popa

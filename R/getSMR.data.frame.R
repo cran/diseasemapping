@@ -4,12 +4,10 @@
  }
  
 getSMR.data.frame <- function(popdata, model, casedata, regionCode = "CSDUID",
-    regionCodeCases = "CSD2006", area = FALSE, area.scale = 1, formatPop=TRUE,...){
-#  getSMR(popdata@data, ...)
-    if(formatPop){
+    regionCodeCases = "CSD2006", area = FALSE, area.scale = 1, ...){
+
     poplong <- formatPopulation(popdata, breaks=attributes(model)$breaks$breaks, 
       mustAggregate = FALSE)
-     }else{poplong<-popdata}
      
     popBreaks = attributes(poplong)$breaks
      
@@ -67,26 +65,35 @@ getSMR.data.frame <- function(popdata, model, casedata, regionCode = "CSDUID",
                 agg<-c(agevar, sexvar, offsetvar)
            }
 
-    poplong$expected <- predict(model, poplong[, agg], type = "response")
-
+    # multiply population by popScale, to make it in person years
+    if(any(names(attributes(popdata))=="popScale")) {
+      poplong[,offsetvar]=     poplong[,offsetvar] + 
+        log(attributes(popdata)$popScale)
+    }
     
-    poplong <- aggregate(poplong$expected, list(poplong[[regionCode]]), sum)
-    rownames(poplong) = poplong[,1]
+
+    poplong$expected <- predict(model, poplong[, agg], type = "response")
+    
+     poplong <- aggregate(poplong$expected, list(poplong[[regionCode]]), sum)
+    rownames(poplong) = as.character(poplong[,1])
     poplong=poplong[poplong[,2] > 0,]
 
 
     # merge results back in to the population data
     # the merge function changes the order, so can't use it.
     popdata$expected = NA
-    rownames(popdata) = popdata[,regionCode]
+    rownames(popdata) = as.character(popdata[,regionCode])
 
     popdata[rownames(poplong), "expected"] = poplong[,2]
     
     if (area & ("sqk" %in% names(popdata) ) ) {
-        popdata$expected_sqk <- 
-          popdata$expected/popdata$sqk
+        popdata$expected_sqk <- popdata$expected/popdata$sqk
+        popdata$logExpected_sqk = log(popdata$expected_sqk)
     }
     popdata$logExpected = log(popdata$expected)
+    
+    # change NA's in logExpected to zeros, so that it can be used in models
+    popdata$logExpected[is.na(popdata$logExpected)] = 0
 
     if (!is.null(casedata)) {
        casedata = formatCases(casedata, ageBreaks=popBreaks)
@@ -97,23 +104,18 @@ getSMR.data.frame <- function(popdata, model, casedata, regionCode = "CSDUID",
             ignore.case = TRUE)
        if (!length(casecol)) {
             casecol = "cases"
-            cases[, casecol] = 1
+            casedata[, casecol] = 1
        }
 
        casedata <- aggregate(casedata[[casecol]], 
          list(casedata[[regionCodeCases]]), sum)
        names(casedata) = c(regionCodeCases, "observed")
 
-      popdata$observed = NA
+      popdata$observed = 0
       popdata[as.character(casedata[,1]),"observed"] = casedata[,2]
    
-    #   popdata = merge(popdata, casedata, 
-     #    by.x=regionCode, by.y =regionCodeCases, all.x = TRUE)
-        
        popdata$SMR <- popdata$observed/popdata$expected
    }
 
    popdata
 }
-
-

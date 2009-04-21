@@ -14,6 +14,7 @@ mergeBugsData.data.frame = function(x, bugsSummary,
   if(!is.list(bugsSummary)) {
     if(is.vector(bugsSummary)  ) {
       bugsSummary = data.frame(bugsSummary)
+      names(bugsSummary) = newcol
 
     }
     bugsSummary = list( R= bugsSummary)
