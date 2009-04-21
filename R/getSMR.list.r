@@ -34,7 +34,7 @@ getSMR.list <- function(popdata, model, casedata = NULL, regionCode = "CSDUID",
 
   
     # scaling factor to convert to person years
-    attributes(popdata[[Dyear]])$popScale = interval[names(interval)==Dyear]
+    attributes(popdata[[Dyear]]@data)$popScale = interval[names(interval)==Dyear]
     
     # add year column
     popdata[[Dyear]][[yearVar]] = factor(rep(as.character(names(popdata[Dyear])), length(popdata[[Dyear]][1]),
