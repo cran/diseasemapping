@@ -24,7 +24,7 @@ if(morethanoneyear){
 #if years not supplied, use the names of list
 if(is.null(years) & morethanoneyear ){
   years = as.integer(names(popdata))
-} 
+}
 
 #factors we need to aggregate by
 theterms = (rownames(attributes(terms(formula))$factors))
@@ -61,7 +61,7 @@ casecol = grep("^cases$", names(casedata), value=TRUE, ignore.case=TRUE)
 if(!length(casecol)) {
   #there is no case col
   casecol = "cases"
-  cases[,casecol] = 1
+  casedata[,casecol] = 1
 }
 
 
@@ -76,7 +76,10 @@ newdata <- merge(casedata, pops, by.x = theterms, by.y = by.pop)
 if (morethanoneyear){
 ####find Popoluation census year
 #a vector of all years
-times<-c(year.range[1],years,year.range[2])
+
+
+times<-c(year.range[1],sort(years),year.range[2])
+
 inter<-diff(times)/2 #mid points
 #sum of consective mid points
 nseq<-1:length(inter)-1

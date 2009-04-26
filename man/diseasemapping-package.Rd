@@ -34,9 +34,25 @@ spplot(ontario, 'SMR')
 \dontrun{
 library(glmmBUGS)
 # run the model
+library(spdep)
+popDataAdjMat = poly2nb(ontario, ontario[["CDSUID"]])
+library(glmmBUGS)
+forBugs = glmmBUGS(formula=observed + logExpected ~ 1,
+  effects="CSDUID", family="poisson", spatial=popDataAdjMat,
+  data=ontario@data)
+startingValues = forBugs$startingValues
+source("getInits.R")
+library(R2WinBUGS)
+ontarioResult = bugs(forBugs$ragged, getInits, parameters.to.save = names(getInits()),
+    model.file="model.bug", n.chain=3, n.iter=100, n.burnin=10, n.thin=2,
+      program="winbugs", debug=TRUE)
 
+data(ontarioResult)
+ontarioParams = restoreParams(ontarioResult, forBugs$ragged)
+ontarioSummary = summaryChain(ontarioParams)
 
 # merge results back in to popdata
+ontario = mergeBugsData(ontario, ontarioSummary)
 }
 
 
