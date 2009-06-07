@@ -16,7 +16,7 @@ computeArea(sp)
 \value{
   A list, each element containing the area of a polygon.
 }
-\seealso{ ~~objects to See Also as \code{\link{help}}, ~~~ }
+\seealso{}
 \examples{
 data(popdata)
 theAreas = computeArea(popdata)

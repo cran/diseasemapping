@@ -6,9 +6,12 @@
 getSMR.data.frame <- function(popdata, model, casedata, regionCode = "CSDUID",
     regionCodeCases = "CSD2006", area = FALSE, area.scale = 1, ...){
 
-    poplong <- formatPopulation(popdata, breaks=attributes(model)$breaks$breaks, 
-      mustAggregate = FALSE)
+    poplong <- formatPopulation(popdata, breaks=attributes(model)$breaks$breaks)
+      
+    p<-grep("^population$", names(poplong), value=TRUE, ignore.case=TRUE)  
      
+    poplong[is.na(poplong[,p]),p] <- 0
+    
     popBreaks = attributes(poplong)$breaks
      
      # get rid of zero populations,because they dont lead to rates of exactly zero
@@ -67,8 +70,7 @@ getSMR.data.frame <- function(popdata, model, casedata, regionCode = "CSDUID",
 
     # multiply population by popScale, to make it in person years
     if(any(names(attributes(popdata))=="popScale")) {
-      poplong[,offsetvar]=     poplong[,offsetvar] + 
-        log(attributes(popdata)$popScale)
+      poplong[,offsetvar]=     poplong[,offsetvar] + log(attributes(popdata)$popScale)
     }
     
 

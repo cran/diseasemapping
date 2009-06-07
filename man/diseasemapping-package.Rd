@@ -32,10 +32,9 @@ spplot(ontario, 'SMR')
 # an example of a spatial model with glmmBUGS
 
 \dontrun{
-library(glmmBUGS)
 # run the model
 library(spdep)
-popDataAdjMat = poly2nb(ontario, ontario[["CDSUID"]])
+popDataAdjMat = poly2nb(ontario, ontario[["CSDUID"]])
 library(glmmBUGS)
 forBugs = glmmBUGS(formula=observed + logExpected ~ 1,
   effects="CSDUID", family="poisson", spatial=popDataAdjMat,

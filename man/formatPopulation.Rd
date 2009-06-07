@@ -27,7 +27,7 @@ formatPopulation(popdata, aggregate.by = NULL, breaks = NULL, ...)
   \item{breaks}{ age breaks the user want to use. i.e breaks = c(10, 20, 30 ,40, 60, Inf). }
 %  \item{driver}{}
   \item{years}{the years vector}
-  \item{aggregate}{if \code{TRUE} the aggregate the population data}
+  \item{aggregate}{if \code{TRUE} then aggregate the population data}
   \item{year.range}{the range of the year vector}
   \item{time}{the time variable, i.e years}
   \item{personYears}{convert populations to person-years}
@@ -47,7 +47,7 @@ The sex column will have two levels "M" and "F" as factors.
 
 \author{ Patrick Brown }
 \note{
- If not offer a breaks value, the function will aggregate by "age".
+ If not offer a breaks value, the function will aggregate by "age" as default.
 }
 
 \examples{

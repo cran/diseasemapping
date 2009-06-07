@@ -29,7 +29,7 @@ if(is.null(years) & morethanoneyear ){
 #factors we need to aggregate by
 theterms = (rownames(attributes(terms(formula))$factors))
 
-pops <- formatPopulation(popdata, aggregate.by= theterms, breaks=breaks, getoff=FALSE) 
+pops <- formatPopulation(popdata, aggregate.by= theterms, breaks=breaks, personYears=FALSE)
           
 
 ##format case data
