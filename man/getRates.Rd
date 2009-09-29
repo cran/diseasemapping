@@ -10,7 +10,7 @@ a glm model with poisson distribution by default.
 getRates(casedata, popdata, formula, family = poisson, minimumAge = 0, 
     maximumAge = 100, S = c("M", "F"), years = NULL, year.range = NULL, 
     case.years = grep("^year$", names(casedata), ignore.case = TRUE, 
-        value = TRUE)[1], breaks = NULL) 
+        value = TRUE)[1], fit.numeric=NULL, breaks = NULL) 
 
 }
 
@@ -26,6 +26,7 @@ getRates(casedata, popdata, formula, family = poisson, minimumAge = 0,
   \item{years}{  a vector of census years  }
   \item{year.range}{study period: a vector of two elements, starting dates and ending dates  }
   \item{case.years}{ variable name in the case data which contains time  }
+  \item{fit.numeric}{ the variables which needed to be changed from factor to numeric}
   \item{breaks}{ the age breaks }
 }
 \details{

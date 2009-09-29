@@ -48,6 +48,9 @@ if(length(sexcol)) poplong[,sexcol] <- toupper(poplong[,sexcol])
 attributes(poplong)$breaks = ageBreaks
 
 
+
+
+
 #poplong <- poplong[!is.na(poplong$POPULATION),  ]
 poplong
 

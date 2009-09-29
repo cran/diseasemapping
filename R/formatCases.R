@@ -1,12 +1,15 @@
 `formatCases` <- function(casedata, ageBreaks=NULL, years=NULL, aggregate.by=NULL) {
 
+if(class(casedata)!="data.frame")
+  warning("class of casedata should be data.frame, casedata provided is ", class(casedata))
+
 # are there age and sex columns?
 agecol = grep("^age$", names(casedata), value=TRUE, ignore.case=TRUE)
 sexcol = grep("^sex$", names(casedata), value=TRUE, ignore.case=TRUE)
 
 if(length(agecol) & length(sexcol)){
 casedata$age = casedata[[agecol]]
-casedata$sex = casedata[[sexcol]]
+casedata$sex = gsub("[[:space:]]", "", casedata[[sexcol]])
 }else{
 # if not, is there an age_sex_group column, in rif format?  use it to create age and sex
 

@@ -26,7 +26,9 @@ data(casedata)
 
 model = getRates(casedata, popdata, ~age*sex, breaks=seq(0, 90, by=10) )
 ontario = getSMR(popdata,model,  casedata)
+\dontrun{
 spplot(ontario, 'SMR')
+}
 
 
 # an example of a spatial model with glmmBUGS

@@ -13,7 +13,7 @@ add in 4 columns : GROUP, POPULATION, sex and age.
 \usage{
 formatPopulation(popdata, aggregate.by = NULL, breaks = NULL, ...)
 \method{formatPopulation}{data.frame}(popdata, aggregate.by=NULL, breaks=NULL,...)
-\method{formatPopulation}{list}(popdata, aggregate.by=NULL,  breaks = NULL, years=as.integer(names(popdata)), year.range=NULL,  time="YEAR", personYears=TRUE, ...)
+\method{formatPopulation}{list}(popdata, aggregate.by=NULL, breaks = NULL, years=as.integer(names(popdata)), year.range=NULL,  time="YEAR", personYears=TRUE, S=c("M", "F"),...)
 %formatPopulation.PostgreSQLConnection(dbname, user="postgres",driver="PostgreSQL",aggregate=FALSE)
 \method{formatPopulation}{SpatialPolygonsDataFrame}(popdata, ...)
 }
@@ -31,6 +31,7 @@ formatPopulation(popdata, aggregate.by = NULL, breaks = NULL, ...)
   \item{year.range}{the range of the year vector}
   \item{time}{the time variable, i.e years}
   \item{personYears}{convert populations to person-years}
+  \item{S}{ can choose both or either of each sex.}
   \item{\dots}{ additional arguments. }
 }
 \details{
