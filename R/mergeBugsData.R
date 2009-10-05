@@ -33,8 +33,8 @@ mergeBugsData.data.frame = function(x, bugsSummary,
       warning("more than one effect level found")
     }
     if(!any(names(x) == effectString))
-      warning("can't find the effeect in the data provided")
-    by.x = effectString
+        stop("can't find the effect in the data provided")
+       by.x = effectString
   }
 
   newNames = c(outer(effects, newcol, FUN=paste, sep="."))

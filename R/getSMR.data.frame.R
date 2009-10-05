@@ -3,8 +3,39 @@
        UseMethod("getSMR")
  }
  
-getSMR.data.frame <- function(popdata, model, casedata, regionCode = "CSDUID",
+getSMR.data.frame <- function(popdata, model, casedata=NULL, regionCode = "CSDUID",
     regionCodeCases = "CSD2006", area = FALSE, area.scale = 1, ...){
+
+
+
+
+    if(is.numeric(model)) {
+    # model is a vector of rates
+        # check breaks for groups, make sure they line up
+        rateBreaks =getBreaks(names(model))
+        popBreaks = getBreaks(names(popdata))
+        
+        noPop = ! popBreaks$newNames %in% rateBreaks$newNames
+        if(any(noPop))
+          warning(paste("population group(s)", toString(popBreaks$oldNames[noPop]),
+           "ignored") )
+        noRate = ! rateBreaks$newNames %in% popBreaks$newNames  
+        if(any(noRate))
+          warning(paste("rate group(s)", toString(rateBreaks$oldNames[noRate]),
+           "ignored\n") )
+  
+        popGroups = popBreaks$oldNames[!noPop]
+        names(popGroups) = popBreaks$newNames[!noPop]
+
+        rateGroups = rateBreaks$oldNames[!noRate]
+        names(rateGroups) = rateBreaks$newNames[!noRate]
+        
+        popdata$expected = as.vector(
+            as.matrix(popdata[,popGroups]) %*% model[rateGroups[names(popGroups)]]
+          )
+        rownames(popdata) = as.character(popdata[,regionCode])  
+    } else {
+    # use the predict method on the model
 
     poplong <- formatPopulation(popdata, breaks=attributes(model)$breaks$breaks)
       
@@ -18,9 +49,9 @@ getSMR.data.frame <- function(popdata, model, casedata, regionCode = "CSDUID",
      poplong=poplong[poplong[,
       grep("^population$", names(poplong), value=TRUE, ignore.case=TRUE)]>0, ]     
     #changes poplong names to be consistent with model
-    agevar<-grep("^age$",names(model$xlevels),value=TRUE,ignore.case=TRUE)
-    sexvar<-grep("^sex$",names(model$xlevels),value=TRUE,ignore.case=TRUE)
-    yearvar<-grep("^year$",names(model$xlevels),value=TRUE,ignore.case=TRUE)
+    agevar<-grep("^age$",names(attributes((terms(model)))$dataClasses),value=TRUE,ignore.case=TRUE)
+    sexvar<-grep("^sex$",names(attributes((terms(model)))$dataClasses),value=TRUE,ignore.case=TRUE)
+    yearvar<-grep("^year$",names(attributes((terms(model)))$dataClasses),value=TRUE,ignore.case=TRUE)
 
     agevar1<-grep("^age$",names(poplong),value=TRUE,ignore.case=TRUE)
     sexvar1<-grep("^sex$",names(poplong),value=TRUE,ignore.case=TRUE)
@@ -36,13 +67,16 @@ getSMR.data.frame <- function(popdata, model, casedata, regionCode = "CSDUID",
      names(poplong[[yearvar1]])=yearvar
     }
 
-    
+      # get rid of a gender
     if (length(model$sexSubset) == 1) {
-        poplong = poplong[poplong$sex == model$sexSubset, ]
+        poplong = poplong[poplong[[sexvar1]] == model$sexSubset, ]
     }
     
       
-      offsetvar<- grep("logpop",names(model$data) ,value=TRUE, ignore.case=TRUE)
+      offsetvar<- grep("^offset",names(attributes((terms(model)))$dataClasses)  ,value=TRUE, ignore.case=TRUE)
+       offsetvar<- substr(offsetvar,8,nchar(offsetvar)-1)
+      
+      
     poplong[[offsetvar]] = log(poplong$POPULATION)
 #    poplong[[sexvar]]= factor(poplong[[sexvar]])
 #    poplong[[agevar]] = factor(poplong[[agevar]])
@@ -62,8 +96,8 @@ getSMR.data.frame <- function(popdata, model, casedata, regionCode = "CSDUID",
         poplong = poplong[!poplong$param %in% interact, ]
         poplong$param <- NULL
     }
-    if(length(yearvar)) {   
-           agg<-c(yearvar,agevar, sexvar,offsetvar)
+    if(length(yearvar1)) {
+           agg<-c(yearvar1,agevar, sexvar,offsetvar)
            }else{
                 agg<-c(agevar, sexvar, offsetvar)
            }
@@ -74,7 +108,8 @@ getSMR.data.frame <- function(popdata, model, casedata, regionCode = "CSDUID",
     }
     
 
-    poplong$expected <- predict(model, poplong[, agg], type = "response")
+    poplong$expected <- predict(model, poplong,#[,agg],
+     type = "response")
     
      poplong <- aggregate(poplong$expected, list(poplong[[regionCode]]), sum)
     rownames(poplong) = as.character(poplong[,1])
@@ -87,15 +122,22 @@ getSMR.data.frame <- function(popdata, model, casedata, regionCode = "CSDUID",
     rownames(popdata) = as.character(popdata[,regionCode])
 
     popdata[rownames(poplong), "expected"] = poplong[,2]
+
+    } # done predicting rates from model
+    
     
     if (area & ("sqk" %in% names(popdata) ) ) {
         popdata$expected_sqk <- popdata$expected/popdata$sqk
         popdata$logExpected_sqk = log(popdata$expected_sqk)
     }
-    popdata$logExpected = log(popdata$expected)
+
     
-    # change NA's in logExpected to zeros, so that it can be used in models
+    popdata$logExpected = log(popdata$expected)
+    popdata$observed = 0
+    # change NA's and -Inf in logExpected to zeros, so that it can be used in models
     popdata$logExpected[is.na(popdata$logExpected)] = 0
+    popdata$logExpected[popdata$logExpected==-Inf] = 0
+    
 
     if (!is.null(casedata)) {
        casedata = formatCases(casedata, ageBreaks=popBreaks)
@@ -113,10 +155,14 @@ getSMR.data.frame <- function(popdata, model, casedata, regionCode = "CSDUID",
          list(casedata[[regionCodeCases]]), sum)
        names(casedata) = c(regionCodeCases, "observed")
 
-      popdata$observed = 0
+
       popdata[as.character(casedata[,1]),"observed"] = casedata[,2]
    
-       popdata$SMR <- popdata$observed/popdata$expected
+      # change 0's in expected to NA, so SMR is NA
+
+    popdata$observed[is.na(popdata$expected)] = NA
+    
+     popdata$SMR <- popdata$observed/popdata$expected
    }
 
    popdata
