@@ -16,7 +16,8 @@ computeArea(sp)
 \value{
   A list, each element containing the area of a polygon.
 }
-\seealso{}
+
+
 \examples{
 data(popdata)
 theAreas = computeArea(popdata)

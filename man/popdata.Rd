@@ -17,6 +17,9 @@ This data is from the 2006 Census of canada offering by Statistics Canada web si
 \examples{
 data(popdata)
 head(popdata@data)
-## maybe str(popdata) ; plot(popdata) ...
+\dontrun{
+library(sp)
+plot(popdata)
+}
 }
 \keyword{datasets}

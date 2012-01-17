@@ -4,7 +4,7 @@
 `getRates` <-
 function(casedata, popdata, formula, family=poisson, minimumAge=0,
    maximumAge=100, S=c("M", "F"), years=NULL, year.range=NULL,
-   case.years=grep("^year$", names(casedata), ignore.case=TRUE, value=TRUE)[1],
+   case.years=grep("^year$", names(casedata), ignore.case=TRUE, value=TRUE),
    fit.numeric=NULL ,breaks=NULL){
 
 # check the formula is one sided
@@ -65,7 +65,13 @@ if(length(S)==1) {
 # add covariates to case data from the population data
 # if they are any missing from the case data.
 
-termsToAdd = theterms[!theterms %in% names(casedata)]
+# check to see if any of the terms in the model aren't in the case data
+termsToAdd = NULL
+for(D in theterms) {
+	if(!length(grep(D, names(casedata), ignore.case=TRUE)))
+		termsToAdd = c(termsToAdd, D)
+}
+	
 
 if(length(termsToAdd) ) {
   if(morethanoneyear)
@@ -101,15 +107,7 @@ if(length(termsToAdd) ) {
 casedata = formatCases(casedata, ageBreaks=attributes(pops)$breaks, 
   aggregate.by = theterms)
 
-
-#find number of cases per group
-casecol = grep("^cases$", names(casedata), value=TRUE, ignore.case=TRUE)
-if(!length(casecol)) {
-  #there is no case col
-  casecol = "cases"
-  casedata[,casecol] = 1
-}
-
+casecol = attributes(casedata)$casecol
 
 ##### merge case data set and shape data set according to the same Year and DA2001
 by.x =  paste("^", theterms, "$", sep="")
@@ -151,7 +149,7 @@ newdata[is.na(newdata[,casecol]),casecol] <-0
 # make the age group with the most cases as the base line
 agevar =  grep("^age$", theterms, ignore.case=TRUE, value=TRUE)
 if(length(agevar)==1) {
-  agetable = tapply(newdata$CASES, newdata[[agevar]], sum,na.rm=TRUE)
+  agetable = tapply(newdata[,casecol], newdata[[agevar]], sum,na.rm=TRUE)
   agetable = names(sort(agetable, decreasing=TRUE))
   newdata[[agevar]] = factor(as.character(newdata[[agevar]]),levels= agetable)
 }
@@ -172,11 +170,13 @@ if(!is.null(fit.numeric)){
 }
 
 
-todel <- as.formula(paste(".~.-",sexvar,"-",agevar,":",sexvar,sep=""))
-if(length(S)==1) formula=update.formula(formula, todel)
+#todel <- as.formula(paste(".~.-",sexvar,"-",agevar,":",sexvar,sep=""))
+#if(length(S)==1) formula=update.formula(formula, todel)
 
 # add cases and logpop to formula
-formula1 = update.formula(formula, CASES ~ offset(logpop) + .)
+formula1 = update.formula(formula, 
+		as.formula(paste(casecol," ~ offset(logpop) + ."))
+)
 #return(newdata, formula1)
 
 

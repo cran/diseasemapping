@@ -35,9 +35,9 @@ formatPopulation(popdata, aggregate.by = NULL, breaks = NULL, ...)
   \item{\dots}{ additional arguments. }
 }
 \details{
-  After using the formatPopulation function, it will return the population data set in the same class as the original data set. 
-i.e if a spatial polygon data frame has been put into the formatPopulation function, it will return a spatial polygon data frame. 
-If "aggregate.by" is not NULL, the number of cases will be sum up by the groups define in aggregate.by. 
+  After using the \code{formatPopulation} function, it will return the population data set in the same class as the original data set. 
+i.e if a spatial polygon data frame has been put into the \code{formatPopulation} function, it will return a spatial polygon data frame. 
+If \code{aggregate.by} is not NULL, the number of cases will be sum up by the groups define in aggregate.by. 
 The "Group" column contains information of sex and age groups,in the format of M.55, denotes male, year 55. 
 The "POPULATION" column is a numeric column, denotes the size of population for the particular age and sex group.
 The "age" column will be a "character" column contains ages in a cut format. i.e [50,55), denotes age 50. 
@@ -59,7 +59,4 @@ head(poptry)
 poptryagg <- formatPopulation(popdata, breaks = c(seq(0, 80, by=10), Inf), aggregate.by=c("sex", "age"))
 head(poptryagg)
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ }
-\keyword{ }% __ONLY ONE__ keyword per line
+ 

@@ -9,9 +9,7 @@ Disease Mapping
 Functions for calculating observed and expected counts by region, and manipulating posterior 
 samples from Bayesian models produced by glmmBUGS.
 }
-\details{
 
-}
 
 \author{
 Patrick Brown
@@ -25,7 +23,7 @@ data(popdata)
 data(casedata)
 
 model = getRates(casedata, popdata, ~age*sex, breaks=seq(0, 90, by=10) )
-ontario = getSMR(popdata,model,  casedata)
+ontario = getSMR(popdata,model,  casedata,regionCode="CSDUID", regionCodeCases="CSD2006")
 \dontrun{
 spplot(ontario, 'SMR')
 }
@@ -36,7 +34,8 @@ spplot(ontario, 'SMR')
 \dontrun{
 # run the model
 library(spdep)
-popDataAdjMat = poly2nb(ontario, ontario[["CSDUID"]])
+popDataAdjMat = poly2nb(ontario,row.names=as.character(ontario[["CSDUID"]]))
+
 library(glmmBUGS)
 forBugs = glmmBUGS(formula=observed + logExpected ~ 1,
   effects="CSDUID", family="poisson", spatial=popDataAdjMat,

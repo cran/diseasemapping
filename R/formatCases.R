@@ -3,9 +3,13 @@
 if(class(casedata)!="data.frame")
   warning("class of casedata should be data.frame, casedata provided is ", class(casedata))
 
+
+
 # are there age and sex columns?
 agecol = grep("^age$", names(casedata), value=TRUE, ignore.case=TRUE)
 sexcol = grep("^sex$", names(casedata), value=TRUE, ignore.case=TRUE)
+
+
 
 if(length(agecol) & length(sexcol)){
 casedata$age = casedata[[agecol]]
@@ -44,6 +48,15 @@ if(length(groupvar)){
 }
 }
 
+# give warning if no age or sex column found
+if(length(agecol) != 1) {
+ warning("cant find age column in popdata, found", toString(agecol))
+}
+if(length(sexcol) != 1) {
+ warning("cant find sex column in popdata, found", toString(sexcol))
+}
+
+
 
 if(!is.null(ageBreaks)){
   casedata$ageNumeric = casedata[[agecol]]
@@ -57,15 +70,30 @@ if(!is.null(ageBreaks)){
     attributes(casedata)$breaks = ageBreaks
 }
 
-# aggregate, if necessary
-if(!is.null(aggregate.by) & length(aggregate.by)) {
-   casedata$cases <- 1
-   popa = aggregate(casedata$cases, casedata[, aggregate.by, drop=FALSE], sum)
-   names(popa)[names(popa)=="x"] = "CASES"
-   casedata <- popa
+
+# find column with cases
+casecol = grep("^cases$|^count$|^y$", names(casedata), value=TRUE, ignore.case=TRUE)
+if(length(casecol)>1) {
+	casecol=casecol[1]
+	warning("more than one column which could be interpreted as case numbers, using ", casecol)
+}
+
+if(!length(casecol)) {
+    #there is no case col
+    casecol = "cases"
+    casedata[,casecol] = 1
 }
 
 
+# aggregate, if necessary
+if(!is.null(aggregate.by) & length(aggregate.by)) {
+	
+   popa = aggregate(casedata$cases, casedata[, aggregate.by, drop=FALSE], sum)
+   names(popa)[names(popa)=="x"] = casecol
+   casedata <- popa
+}
+
+attributes(casedata)$casecol = casecol
 attributes(casedata)$breaks = ageBreaks
 casedata
 }

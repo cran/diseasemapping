@@ -1,10 +1,11 @@
-`getSMR` <- function(popdata, model, casedata, regionCode = "CSDUID",
-    regionCodeCases = "CSD2006", area = FALSE, area.scale = 1, ...){
+`getSMR` <- function(popdata, model, casedata, regionCode,
+    regionCodeCases, area = FALSE, area.scale = 1, ...){
        UseMethod("getSMR")
  }
  
-getSMR.data.frame <- function(popdata, model, casedata=NULL, regionCode = "CSDUID",
-    regionCodeCases = "CSD2006", area = FALSE, area.scale = 1, ...){
+getSMR.data.frame <- function(popdata, model, casedata=NULL, 
+		regionCode = intersect(names(popdata), names(casedata))[1],
+    regionCodeCases=regionCode, area=FALSE, area.scale=1, ...){
 
 
 
@@ -14,7 +15,8 @@ getSMR.data.frame <- function(popdata, model, casedata=NULL, regionCode = "CSDUI
         # check breaks for groups, make sure they line up
         rateBreaks =getBreaks(names(model))
         popBreaks = getBreaks(names(popdata))
-        
+
+#return(list(r=rateBreaks, p=popBreaks))
         noPop = ! popBreaks$newNames %in% rateBreaks$newNames
         if(any(noPop))
           warning(paste("population group(s)", toString(popBreaks$oldNames[noPop]),
@@ -29,11 +31,15 @@ getSMR.data.frame <- function(popdata, model, casedata=NULL, regionCode = "CSDUI
 
         rateGroups = rateBreaks$oldNames[!noRate]
         names(rateGroups) = rateBreaks$newNames[!noRate]
-        
+
+       
         popdata$expected = as.vector(
             as.matrix(popdata[,popGroups]) %*% model[rateGroups[names(popGroups)]]
           )
-        rownames(popdata) = as.character(popdata[,regionCode])  
+	if(!is.null(regionCode)) {
+        rownames(popdata) = as.character(popdata[,regionCode])
+    }
+	
     } else {
     # use the predict method on the model
 
@@ -41,11 +47,20 @@ getSMR.data.frame <- function(popdata, model, casedata=NULL, regionCode = "CSDUI
       
     p<-grep("^population$", names(poplong), value=TRUE, ignore.case=TRUE)  
      
+
     poplong[is.na(poplong[,p]),p] <- 0
     
     popBreaks = attributes(poplong)$breaks
      
      # get rid of zero populations,because they dont lead to rates of exactly zero
+    ## check the class of the POPULATION column and make sure it is numeric: 
+	# converted to character first in case it's a factor
+		# (convert factor names to integers, not factor levels)
+ 
+    if(class(poplong[,p]) != "numeric"){
+     poplong[,p] <- as.numeric(as.character(poplong[,p]))
+    }
+
      poplong=poplong[poplong[,
       grep("^population$", names(poplong), value=TRUE, ignore.case=TRUE)]>0, ]     
     #changes poplong names to be consistent with model
@@ -141,17 +156,13 @@ getSMR.data.frame <- function(popdata, model, casedata=NULL, regionCode = "CSDUI
 
     if (!is.null(casedata)) {
        casedata = formatCases(casedata, ageBreaks=popBreaks)
+       casecol = attributes(casedata)$casecol
+	   
        casedata = casedata[
           as.character(casedata[, regionCodeCases]) %in% 
              rownames(popdata), ]
-       casecol = grep("^cases$", names(casedata), value = TRUE,
-            ignore.case = TRUE)
-       if (!length(casecol)) {
-            casecol = "cases"
-            casedata[, casecol] = 1
-       }
-
-       casedata <- aggregate(casedata[[casecol]], 
+	   
+      casedata <- aggregate(casedata[[casecol]], 
          list(casedata[[regionCodeCases]]), sum)
        names(casedata) = c(regionCodeCases, "observed")
 
@@ -159,10 +170,10 @@ getSMR.data.frame <- function(popdata, model, casedata=NULL, regionCode = "CSDUI
       popdata[as.character(casedata[,1]),"observed"] = casedata[,2]
    
       # change 0's in expected to NA, so SMR is NA
-
-    popdata$observed[is.na(popdata$expected)] = NA
+    theexpected = popdata$expected
+    theexpected[theexpected==0] = NA
     
-     popdata$SMR <- popdata$observed/popdata$expected
+     popdata$SMR <- popdata$observed/theexpected
    }
 
    popdata
