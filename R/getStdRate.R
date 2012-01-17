@@ -2,7 +2,7 @@
 getStdRate= function(relativeRate, model, referencePopulation, scale=100000) {
 
 # check for negatives
-if(any(relativeRate < 0 ))
+if(any(relativeRate < -0.0001,na.rm=TRUE ))
   warning("negative numbers in rates, make sure they're not on the log scale")
 
 if(is.character(referencePopulation)) {
@@ -16,6 +16,21 @@ newpop <- formatCases(referencePopulation)
 newpop <- newpop[newpop$POPULATION!=0,]
 
 newpop$logpop <- log(newpop$POPULATION) + log(scale)
+
+
+
+if(is.numeric(model)) {
+    # model is a vector of rates
+        # check breaks for groups, make sure they line up
+        rateBreaks =getBreaks(names(model))
+        names(model) = rateBreaks$newNames
+        newpop = formatCases(referencePopulation, ageBreaks=rateBreaks)
+        
+        newpop =sum(newpop$POPULATION * model[paste(newpop$sex, newpop$ageNumeric, sep=".")]) * scale
+
+        
+    } else {
+# model is a glm object
 
 # predict.glmZeros
 
@@ -49,17 +64,19 @@ if(length(interactNA)>0){
 #agg<-c("age","sex","logpop")
 
 
-newpop$pred <- predict(model, newpop[,c("age","sex","logpop")], type = "response")
+#newpop$pred <- predict(model, newpop[,c("age","sex","logpop")], type = "response")
 
-#referenceRate <- sum(predict(model, newpop[,c("age","sex","logpop")], type = "response"))
+referenceRate <- sum(predict(model, newpop[,c("age","sex","logpop")], type = "response"))
 
-#return(relativeRate*referenceRate)
+newpop= (relativeRate*referenceRate)
 
+}
 #names(newpop)<-c("age","sex", "pred")
 
-for(i in 1:length(relativeRate)){
-newpop[,paste("Region",i,sep="")] = newpop$pred * relativeRate[i]
-}
+#for(i in 1:length(relativeRate)){
+#newpop[,paste("Region",i,sep="")] = newpop$pred * relativeRate[i]
+#}
+#}
 newpop
 }
 

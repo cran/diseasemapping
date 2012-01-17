@@ -4,7 +4,7 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 Given population data at each census year and range of the years that the data spans, this function
-returns a new list of population data for each consective year assuming population is constant between two census years
+returns a new list of population data for each consecutive year assuming population is constant between two census years
 }
 \description{
 Use if census are not done at each year
@@ -24,31 +24,7 @@ The range of the years which the census covers
 The years that the census data are collected
 }
 }
-\details{
 
-}
-\value{
-
-}
-\references{
-%% ~put references to the literature/web site here ~
-}
 \author{  Patrick Brown
 
 }
-\note{
-
-}
-
-
-
-\seealso{
-}
-
-\examples{
-
-}
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{}
-\keyword{ }% __ONLY ONE__ keyword per line

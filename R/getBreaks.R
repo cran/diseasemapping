@@ -1,13 +1,14 @@
 getBreaks <- function (colNames, breaks=NULL) 
 {
-    popColumns <- grep("^(m|f|male|female)[[:digit:]]+(_|-|plus|\\+)[[:digit:]]*$", 
+    popColumns <- grep("^(m|f|male|female)(_|\\.)?[[:digit:]]+(_|-|to|plus|\\+)?[[:digit:]]*$", 
         colNames, value = TRUE, ignore.case = TRUE)
-    ageGroups <- gsub("^(m|f|male|female)", "", popColumns, ignore.case = TRUE)
+    ageGroups <- gsub("^(m|f|male|female)(\\.|_)?", "", popColumns, ignore.case = TRUE)
     ageGroups <- gsub("(\\+|plus)", "_Inf", ageGroups, ignore.case = TRUE)
-    ageLower <- as.numeric(gsub("(_|-)([[:digit:]]+|Inf)$", "", 
+    ageLower <- as.numeric(gsub("(_|-|to|\\.)([[:digit:]]+|Inf)$", "", 
         ageGroups))
-    ageUpper <- as.numeric(gsub("^[[:digit:]]+(_|-)", "", ageGroups))
+    ageUpper <- as.numeric(gsub("^[[:digit:]]+(_|-|to)", "", ageGroups))
     currentbreaks <- c(sort(unique(ageLower)), max(ageUpper))
+
     sex <- substr(popColumns, 1, 1)
 
     result = list(breaks = currentbreaks, age = ageLower, 

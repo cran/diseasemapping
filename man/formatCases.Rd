@@ -24,12 +24,9 @@ If "aggregate.by" is not NULL, the number of cases will be sum up by the groups 
 \value{
 formatCases function will return a data frame. 
 }
-\references{ }
+ 
 \author{Patrick Brown  }
-\note{ 
-
-}
-\seealso{  }
+ 
 \examples{
 data(casedata)
 data(popdata)
@@ -41,5 +38,4 @@ head(caseformatagg)
 
 }
 
-\keyword{ }
-\keyword{ }% __ONLY ONE__ keyword per line
+ 
