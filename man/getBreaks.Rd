@@ -16,8 +16,8 @@ getBreaks(colNames, breaks = NULL)
 }
  
 \examples{
-data(popdata)
-ageBreaks = getBreaks(names(popdata), breaks=c(seq(0, 80, by=10), Inf))
+data(kentucky)
+ageBreaks = getBreaks(names(kentucky), breaks=c(seq(0, 80, by=10), Inf))
 ageBreaks
 }
  

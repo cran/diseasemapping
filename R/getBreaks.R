@@ -7,8 +7,12 @@ getBreaks <- function (colNames, breaks=NULL)
     ageLower <- as.numeric(gsub("(_|-|to|\\.)([[:digit:]]+|Inf)$", "", 
         ageGroups))
     ageUpper <- as.numeric(gsub("^[[:digit:]]+(_|-|to)", "", ageGroups))
-    currentbreaks <- c(sort(unique(ageLower)), max(ageUpper))
+    currentbreaks <- sort(unique(c(ageLower, max(ageUpper))))
 
+	# check upper limit of breaks 
+	if(max(currentbreaks)<=max(ageLower))
+		currentbreaks = c(currentbreaks, Inf)
+	
     sex <- substr(popColumns, 1, 1)
 
     result = list(breaks = currentbreaks, age = ageLower, 

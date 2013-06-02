@@ -10,7 +10,8 @@ returns a new list of population data for each consecutive year assuming populat
 Use if census are not done at each year
 }
 \usage{
-expandCensus(popdata, year.range = range(as.integer(names(popdata))), years = as.integer(names(popdata)))
+expandCensus(popdata, year.range = range(as.integer(names(popdata))), 
+years = as.integer(names(popdata)))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

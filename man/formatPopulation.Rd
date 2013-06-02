@@ -13,7 +13,9 @@ add in 4 columns : GROUP, POPULATION, sex and age.
 \usage{
 formatPopulation(popdata, aggregate.by = NULL, breaks = NULL, ...)
 \method{formatPopulation}{data.frame}(popdata, aggregate.by=NULL, breaks=NULL,...)
-\method{formatPopulation}{list}(popdata, aggregate.by=NULL, breaks = NULL, years=as.integer(names(popdata)), year.range=NULL,  time="YEAR", personYears=TRUE, S=c("M", "F"),...)
+\method{formatPopulation}{list}(popdata, aggregate.by=NULL, breaks = NULL, 
+  years=as.integer(names(popdata)), year.range=NULL,  time="YEAR", personYears=TRUE, 
+  S=c("M", "F"),...)
 %formatPopulation.PostgreSQLConnection(dbname, user="postgres",driver="PostgreSQL",aggregate=FALSE)
 \method{formatPopulation}{SpatialPolygonsDataFrame}(popdata, ...)
 }
@@ -48,15 +50,16 @@ The sex column will have two levels "M" and "F" as factors.
 
 \author{ Patrick Brown }
 \note{
- If not offer a breaks value, the function will aggregate by "age" as default.
+ If \code{breaks} is not specified, the function will aggregate by "age" as default.
 }
 
 \examples{
-data(popdata)
-head(popdata@data)
-poptry <- formatPopulation(popdata, breaks = c(seq(0, 80, by=10), Inf))
+data(kentucky)
+head(kentucky@data)
+poptry <- formatPopulation(kentucky, breaks = c(seq(0, 80, by=10), Inf))
 head(poptry)
-poptryagg <- formatPopulation(popdata, breaks = c(seq(0, 80, by=10), Inf), aggregate.by=c("sex", "age"))
+poptryagg <- formatPopulation(kentucky, breaks = c(seq(0, 80, by=10), Inf), 
+  aggregate.by=c("sex", "age"))
 head(poptryagg)
 }
  

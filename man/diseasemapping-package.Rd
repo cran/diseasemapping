@@ -57,7 +57,42 @@ ontario = mergeBugsData(ontario, ontarioSummary)
 
 
 # running the same thing with INLA
+\dontrun{
+library(INLA)
+# get rid of regions with no neighbours
+ontario2 = ontario[! as.character(ontario$CSDUID) %in% 
+c("3510005" ,"3501007", "3537001", "3551031", "3560065", "3560062"),]
+popDataAdjMat2 = poly2nb(ontario2,
+	row.names=as.character(ontario2[["CSDUID"]]))
+nb2INLA("nb.graph",popDataAdjMat2)
+
+ontario2$CSDUID = as.character(ontario2$CSDUID)
+ 
+prior.iid=prior.besag=c(.42,.00015)
+formula.bym = observed ~  f(CSDUID, 
+    model = "bym", graph = "nb.graph", values=CSDUID ,
+    param = c(prior.iid, prior.besag))
+ 
+result1.bym = inla(formula.bym,family="poisson",data=ontario2@data,
+	offset=ontario2@data$logExpected,
+    verbose=FALSE, keep = TRUE, 
+    control.predictor=list(compute=TRUE))
+    
+
+tomerge = result1.bym$summary.random$CSDUID
+rownames(tomerge) = tomerge$ID
+ 
+ontario2@data =   cbind(ontario2@data, 
+	tomerge[as.character(ontario2$CSDUID),] )   
+	
+spplot(ontario2, "mean")
 
 
+bivariate = inla.hyperpar(result1.bym)$joint.hyper
+colnames(bivariate) = c("iid","spatial","logDens")
+bivariate = SpatialPixelsDataFrame(bivariate[,1:2], bivariate)
+
+	
+}
 
 }

@@ -32,12 +32,10 @@ USA=8400199,
 Iowa=8400899,
 "New Mexico"=8401399
 )
-if(is.character(areaCodes)) {
+if(is.character(area)) {
 area = areaCodes[grep(paste("^", area[1], sep=""), names(areaCodes), ignore.case=TRUE)]
-} else {
-	area = areaCodes[1]
-	
-}
+} 
+
 
 result = list()
 

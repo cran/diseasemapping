@@ -7,15 +7,18 @@
 }
 \usage{data(referencepop)}
 \format{
-  data frame
+Data frame with columns POPULATION, sex, and age  for the Canada 1991 population.
 }
 \details{
- This is a data set contains 36 rows and 3 columns. 
+  data frame with rows representing age-sex groups, first column giving proportion of 
+  Canada 1991 population in that group, and subsequent columns giving sex  and start of
+  age range for each group
 }
 
 
 \examples{
 data(referencepop)
-## maybe str(referencepop) ; plot(referencepop) ...
+head(referencepop)
+sum(referencepop$POPULATION)
 }
 \keyword{datasets}
