@@ -48,14 +48,6 @@ if(length(groupvar)){
 }
 }
 
-# give warning if no age or sex column found
-if(length(agecol) != 1) {
- warning("cant find age column in popdata, found", toString(agecol))
-}
-if(length(sexcol) != 1) {
- warning("cant find sex column in popdata, found", toString(sexcol))
-}
-
 
 
 if(!is.null(ageBreaks)){

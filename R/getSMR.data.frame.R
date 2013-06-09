@@ -155,9 +155,20 @@ getSMR.data.frame <- function(popdata, model, casedata=NULL,
     
 
     if (!is.null(casedata)) {
-       casedata = formatCases(casedata, ageBreaks=popBreaks)
-       casecol = attributes(casedata)$casecol
-	   
+
+# find column with cases
+		casecol = grep("^cases$|^count$|^y$", names(casedata), value=TRUE, ignore.case=TRUE)
+		if(length(casecol)>1) {
+			casecol=casecol[1]
+			warning("more than one column which could be interpreted as case numbers, using ", casecol)
+		}
+		
+		if(!length(casecol)) {
+			#there is no case col
+			casecol = "cases"
+			casedata[,casecol] = 1
+		}
+		
        casedata = casedata[
           as.character(casedata[, regionCodeCases]) %in% 
              rownames(popdata), ]

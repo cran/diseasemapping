@@ -1,5 +1,4 @@
 #return a list of areas
 `computeArea`<-function(sp){
-  allareas=lapply(sp@polygons,function(x) x@area )
-  lapply(allareas,sum)
+	lapply(sp@polygons, function(x) sum(sapply(x@Polygons, function(y) y@area * ifelse(y@hole, 0, 1))))
 }

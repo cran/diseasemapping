@@ -5,11 +5,6 @@ getStdRate= function(relativeRate, model, referencePopulation, scale=100000) {
 if(any(relativeRate < -0.0001,na.rm=TRUE ))
   warning("negative numbers in rates, make sure they're not on the log scale")
 
-if(is.character(referencePopulation)) {
-  data(referencePopulation)
-  referencePopulation = referencePopulation[[referencePopulation]]
-
-}
   
 newpop <- formatCases(referencePopulation)
 
@@ -26,7 +21,7 @@ if(is.numeric(model)) {
         names(model) = rateBreaks$newNames
         newpop = formatCases(referencePopulation, ageBreaks=rateBreaks)
         
-        newpop =sum(newpop$POPULATION * model[paste(newpop$sex, newpop$ageNumeric, sep=".")]) * scale
+        referenceRate =sum(newpop$POPULATION * model[paste(newpop$sex, newpop$ageNumeric, sep=".")]) * scale
 
         
     } else {
@@ -59,24 +54,19 @@ if(length(interactNA)>0){
   newpop = newpop[!newpop$param %in% interact,]
   newpop$param<-NULL
 }
+
 #find expected
 
-#agg<-c("age","sex","logpop")
 
-
-#newpop$pred <- predict(model, newpop[,c("age","sex","logpop")], type = "response")
-
+		
 referenceRate <- sum(predict(model, newpop[,c("age","sex","logpop")], type = "response"))
 
-newpop= (relativeRate*referenceRate)
-
 }
-#names(newpop)<-c("age","sex", "pred")
 
-#for(i in 1:length(relativeRate)){
-#newpop[,paste("Region",i,sep="")] = newpop$pred * relativeRate[i]
-#}
-#}
+
+
+	newpop= (relativeRate*referenceRate)
+	
 newpop
 }
 
