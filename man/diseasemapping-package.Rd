@@ -19,15 +19,19 @@ Patrick Brown
 
 \examples{
 # creating SMR's
-data(popdata)
-data(casedata)
+data(kentucky)
 
-model = getRates(casedata, popdata, ~age*sex, breaks=seq(0, 90, by=10) )
-ontario = getSMR(popdata,model,  casedata,regionCode="CSDUID", regionCodeCases="CSD2006")
 \dontrun{
-spplot(ontario, 'SMR')
+larynxRates= cancerRates("USA", year=1998:2002,site="Larynx")
 }
 
+kentucky2 = getSMR(kentucky, larynxRates, larynx, 
+		regionCode="County")
+
+\dontrun{
+library(spdep)
+spplot(kentucky, "SMR")
+}
 
 # an example of a spatial model with glmmBUGS
 

@@ -18,7 +18,9 @@ regionCodeCases = regionCode, area=FALSE , area.scale=1, ...)
 \method{getSMR}{list}(popdata, model, casedata = NULL, regionCode , 
 regionCodeCases, area , area.scale , years = NULL, 
 personYears= TRUE, year.range = NULL, ...)
-\method{getSMR}{SpatialPolygonsDataFrame}(popdata, ...)
+\method{getSMR}{SpatialPolygonsDataFrame}(popdata, model, casedata=NULL, 
+		regionCode = intersect(names(popdata), names(casedata))[1],
+		regionCodeCases=regionCode, area=FALSE,  ...)
 }
 \arguments{
   \item{popdata}{ the name of population data set  }

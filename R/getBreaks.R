@@ -16,7 +16,7 @@ getBreaks <- function (colNames, breaks=NULL)
     sex <- substr(popColumns, 1, 1)
 
     result = list(breaks = currentbreaks, age = ageLower, 
-        sex = sex, oldNames = popColumns, newNames = paste(sex, 
+        sex = sex, oldNames = popColumns, newNames = paste(toupper(sex), 
             ageLower, sep = "."))
 
 if(length(breaks)> 0 ) {
