@@ -26,6 +26,8 @@ data(kentucky)
 larynxRates= cancerRates("USA", year=1998:2002,site="Larynx")
 }
 
+head(larynx)
+
 kentucky2 = getSMR(kentucky, larynxRates, larynx, 
 		regionCode="County")
 

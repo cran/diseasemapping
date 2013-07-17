@@ -43,7 +43,7 @@ result = list()
   for(Dsex in names(sexes)) {
 fs<-paste("http://ci5.iarc.fr/CI5plus/Table4r.asp?registry=",area,(paste("&period=",year,sep="",collapse="")),"&sex=", sexes[Dsex],"&window=1&text=1&stat=0&submit=Execute",sep="")
 tempn = scan(fs, what="a", quiet=T)
-theurl=(paste("http://ci5.iarc.fr/", gsub("^HREF=", "", grep("href=/data", tempn, value=T, ignore.case=T)), sep=""))
+theurl=(paste("http://ci5.iarc.fr/", gsub("^HREF=", "", grep("href=/data", iconv(tempn,to="UTF-8"), value=T, ignore.case=T)), sep=""))
 result[[Dsex]]=read.table(url(theurl), header=T,skip=1, fill=T, sep="\t", as.is=T)
 forAttribute = scan(url(theurl), what="a", sep="\t", nmax=1, quiet=T)
 
