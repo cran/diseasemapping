@@ -17,14 +17,14 @@ getStdRate(relativeRate, model, referencePopulation, scale = 1e+05)
 \author{Lutong Zhou }
 
 \examples{
-data(referencepop)
-data(casedata)
-data(popdata)
-# get the age sex group rate:
-model = getRates(casedata, popdata, ~age*sex, S=c("M","F"))
-# calculate the relative rate using glmmBUGS:
-ontario = getSMR(popdata, model, casedata,regionCode="CSDUID", regionCodeCases="CSD2006")
-newpop <- getStdRate(ontario$SMR, model, referencepop, scale=100000)
+data(kentucky)
 
+kentucky2 = getSMR(kentucky, larynxRates, larynx, 
+		regionCode="County")
+
+data(referencepop)
+newpop <- getStdRate(kentucky2$SMR, larynxRates, referencepop, scale=100000)
+
+newpop[1:10]
 }
  

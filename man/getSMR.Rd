@@ -47,10 +47,12 @@ Otherwise, \code{model} is passed to the \code{predict} function.
 }
  
 \examples{
-data(casedata)
-data(popdata)
-therates = getRates(casedata, popdata, ~age*sex,breaks=c(seq(0, 80, by=10), Inf) )
-thesmr = getSMR(popdata, therates, casedata,regionCode="CSDUID", regionCodeCases="CSD2006")
-head(thesmr@data)
+data(kentucky)
+
+kentucky2 = getSMR(kentucky, larynxRates, larynx, 
+		regionCode="County")
+
+data.frame(kentucky2)[1:10,grep("^F|^M", names(kentucky2), invert=TRUE)]
+
 }
  
