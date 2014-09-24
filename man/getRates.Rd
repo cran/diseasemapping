@@ -41,12 +41,12 @@ getRates(casedata, popdata, formula, family = poisson, minimumAge = 0,
 
 
 \examples{
-\dontrun{
-data(casedata)
-data(popdata)
-therates = getRates(casedata, popdata, ~age*sex,breaks=c(seq(0, 80, by=10), Inf))
-therates
-}
-}
 
+data('casedata')
+data('popdata')
+therates = getRates(casedata, popdata, ~sex*age,
+	breaks=c(seq(0, 80, by=10), Inf))
+therates
+
+}
  

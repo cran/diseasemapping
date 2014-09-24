@@ -6,7 +6,7 @@ function(casedata, popdata, formula, family=poisson, minimumAge=0,
    maximumAge=100, S=c("M", "F"), years=NULL, year.range=NULL,
    case.years=grep("^year$", names(casedata), ignore.case=TRUE, value=TRUE),
    fit.numeric=NULL ,breaks=NULL){
-
+ 
 # check the formula is one sided
   
 if(attributes(terms(formula))$response)
@@ -16,7 +16,7 @@ morethanoneyear = class(popdata)=="list"
 
 #if s() is in formula, use GAM
 useGam <- length(grep("s\\(",formula))>0
-if(useGam) {
+if(useGam & requireNamespace("mgcv", quietly = TRUE)) {
   modelFittingFunction = mgcv::gam
 } else {
   modelFittingFunction = glm
@@ -37,9 +37,9 @@ if(is.null(years) & morethanoneyear ){
 #factors we need to aggregate by
 theterms=gsub("^s\\(|,([[:alnum:]]|=|[[:space:]]|,|\\$|\\[|\\])+\\)$|\\)$", "", rownames(attributes(terms(formula))$factors))
 
+pops <- formatPopulation(popdata, aggregate.by= theterms, 
+		breaks=breaks, personYears=FALSE,S=S)
 
-pops <- formatPopulation(popdata, aggregate.by= theterms, breaks=breaks, personYears=FALSE,S=S)
-          
 ##format case data
 #casedata = formatCases(casedata, ageBreaks=attributes(pops)$breaks, aggregate.by = theterms)
 
@@ -102,8 +102,8 @@ if(length(termsToAdd) ) {
   casedata = merge(casedata, colsToTry[,c(colPop,termsToAdd)], 
     by.x=colCase, by.y=colPop)
 
-}
-
+} # end if termsToAdd
+ 
 casedata = formatCases(casedata, ageBreaks=attributes(pops)$breaks, 
   aggregate.by = theterms)
 
@@ -119,7 +119,7 @@ by.pop = grep(by.x, names(pops), ignore.case=TRUE, value=TRUE)
 by.pop<-by.pop[order(by.pop)]
 theterms<-theterms[order(theterms)]
 
-
+ 
 newdata <- merge(casedata, pops, by.x = theterms, by.y = by.pop,all.x=TRUE)
 
 if (morethanoneyear){
@@ -136,7 +136,7 @@ names(interval)<-names(table(newdata$YEAR))
 newdata$yearsForCensus = interval[as.character(newdata$YEAR)]
 newdata$POPULATION = newdata$POPULATION  * newdata$yearsForCensus 
 newdata$YEAR= factor(newdata$YEAR, levels = unique(newdata$YEAR))
-}
+} # end more than one year
 
 
 newdata = newdata[!is.na(newdata$POPULATION),]
@@ -182,7 +182,7 @@ formula1 = update.formula(formula,
 
 #fit model, if there is an error, return data only
 options(show.error.messages = FALSE)
-
+ 
 model <- modelFittingFunction(formula1, family=family, data=newdata)
 
 if(class(model)[1]=="try-error"){

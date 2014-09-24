@@ -28,8 +28,8 @@ formatCases function will return a data frame.
 \author{Patrick Brown  }
  
 \examples{
-data(casedata)
-data(popdata)
+data('casedata')
+data('popdata')
 head(casedata)
 caseformat <- formatCases(casedata, ageBreaks = getBreaks(names(popdata@data)))
 head(caseformat)

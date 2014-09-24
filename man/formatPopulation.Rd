@@ -54,7 +54,7 @@ The sex column will have two levels "M" and "F" as factors.
 }
 
 \examples{
-data(kentucky)
+data('kentucky')
 head(kentucky@data)
 poptry <- formatPopulation(kentucky, breaks = c(seq(0, 80, by=10), Inf))
 head(poptry)

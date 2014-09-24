@@ -9,7 +9,6 @@ getSMR.data.frame <- function(popdata, model, casedata=NULL,
 
 
 
-
     if(is.numeric(model)) {
     # model is a vector of rates
         # check breaks for groups, make sure they line up
@@ -17,24 +16,37 @@ getSMR.data.frame <- function(popdata, model, casedata=NULL,
         rateBreaks =getBreaks(names(model))
         popBreaks = getBreaks(names(popdata))
 
-		newBreaks = getBreaks(intersect(rateBreaks$newNames, popBreaks$newNames))
-		
-		newModel = data.frame(age=rateBreaks$age, sex=rateBreaks$sex, 
-				rate=model)
-		newModel = formatCases(newModel, newBreaks)
-		newModel = aggregate(newModel$rate, 
-				newModel[,c('age','sex')],mean,na.rm=T)
-		rownames(newModel) = 
-				paste(newModel$sex, 
-						newModel$age, 
-						sep='.')
-		
-		poplong = formatPopulation(popdata, breaks=newBreaks$breaks)
-		
-		poplong$expected = poplong$POPULATION *  
-				newModel[paste(poplong$sex, poplong$age, sep='.')
-						,'x']
+	newBreaks = getBreaks(intersect(rateBreaks$newNames, popBreaks$newNames))
 	
+	newModel = data.frame(age=rateBreaks$age, sex=rateBreaks$sex, 
+			rate=model)
+	newModel = formatCases(newModel, newBreaks)
+	newModel = aggregate(newModel$rate, 
+			newModel[,c('age','sex')],mean,na.rm=T)
+	rownames(newModel) = 
+			paste(newModel$sex, 
+				newModel$age, 
+				sep='.')
+		
+	poplong = formatPopulation(popdata, breaks=newBreaks$breaks)
+		
+	poplong$expected = poplong$POPULATION *  
+			newModel[paste(poplong$sex, poplong$age, sep='.')
+						,'x']
+		
+	if(any(names(list(...))=='sex')){
+		sex=list(...)$sex
+		if('sex' %in% names(poplong)){
+			poplong= poplong[poplong$sex %in% toupper(sex),]
+		}	
+		if(!is.null(casedata)) {
+			if('sex' %in% colnames(casedata)){
+				casedata = casedata[
+			toupper(casedata[,'sex']) %in% toupper(sex), 
+				]
+			}
+		}
+	}
     } else {
     # use the predict method on the model
 
@@ -122,7 +134,8 @@ getSMR.data.frame <- function(popdata, model, casedata=NULL,
      type = "response")
 	} # done predicting rates from model
 	
-    poplong <- aggregate(poplong$expected, list(poplong[[regionCode]]), sum)
+    poplong <- aggregate(poplong$expected, list(poplong[[regionCode]]), 
+			sum, na.rm=TRUE)
     rownames(poplong) = as.character(poplong[,1])
     poplong=poplong[poplong[,2] > 0,]
 
@@ -167,10 +180,10 @@ getSMR.data.frame <- function(popdata, model, casedata=NULL,
 		
        casedata = casedata[
           as.character(casedata[, regionCodeCases]) %in% 
-             rownames(popdata), ]
+				  rownames(popdata), ]
 	   
-      casedata <- aggregate(casedata[[casecol]], 
-         list(casedata[[regionCodeCases]]), sum)
+      casedata <- aggregate(casedata[,casecol], 
+         list(casedata[,regionCodeCases]), sum)
        names(casedata) = c(regionCodeCases, "observed")
 
 

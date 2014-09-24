@@ -8,3 +8,6 @@ exportPattern(".")
 import(
   sp
 )
+
+
+# also uses spdep::poly2nb
