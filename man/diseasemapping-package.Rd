@@ -50,6 +50,17 @@ if(require('mapmisc', quietly=TRUE)) {
 	scaleBar(kentucky2,"topright")
 }
 
+if( require("spdep", quietly=TRUE) & require("INLA", quietly=TRUE)) {
+
+
+kBYM = bym(observed ~ offset(logExpected) + poverty, kentucky2, 
+	 priorCI = list(sdSpatial=c(0.1, 5), sdIndep=c(0.1, 5)),
+	 control.mode=list(theta=c(3.52, 3.35),restart=TRUE))
+
+kBYM$par$summary
+
+}
+
 # an example of a spatial model with glmmBUGS
 
 \dontrun{
