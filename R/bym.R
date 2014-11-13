@@ -19,12 +19,13 @@ setClass('nb',
 		)
 )
 
-`inla.nb.to.graph` = function(adjMat, graph.file="graph.dat")
+`nbToInlaGraph` = function(adjMat, graphFile="graph.dat")
 {
 	## A function for converting GeoBUGS adjacency data into the INLA
 	## graph format. Kindly provided by Aki Havunlinna tkk.fi; thanks.
+	# edited by Patrick Brown to allow for some regions having no neighbours
 	
-	fd = file(graph.file,  "w")
+	fd = file(graphFile,  "w")
 	len <- length(adjMat)
 
 	cat(len, '\n', file=fd)
@@ -106,17 +107,17 @@ bym.needAdjmat = function(
 	)
 	
 	}	
-	setMethod("bym", 
+setMethod("bym", 
 			signature("formula", "SpatialPolygonsDataFrame", "missing","character"),
 			bym.needAdjmat		
-	)
+)
 	
-	setMethod("bym", 
+setMethod("bym", 
 			signature("formula", "SpatialPolygonsDataFrame", "NULL","character"),
 			bym.needAdjmat		
-	)
+)
 
-	setMethod("bym", 
+setMethod("bym", 
 		signature("formula", "SpatialPolygonsDataFrame", "nb","character"),
 		function(
 				formula, data, adjMat,region.id,
@@ -155,7 +156,7 @@ bym.data.frame = function(formula, data,adjMat,		region.id,
 		# if using windows, replace back slashes with forward slashes...
 		graphfile = gsub("\\\\", "/", graphfile)
 		
-		region.index = inla.nb.to.graph(adjMat, graphfile)
+		region.index = nbToInlaGraph(adjMat, graphfile)
 
 		# check for data regions missing from adj mat
 		data[[region.id]] = as.character(data[[region.id]])
@@ -290,6 +291,7 @@ formulaForLincombs = gsub("\\+[[:space:]]?$|^[[:space:]]?\\+[[:space:]]+", "", f
 		lincombFrame = model.frame(formulaForLincombs, dataOrder,
 				na.action=na.omit)
 
+		
 		SregionFitted = dataOrder[rownames(lincombFrame),"region.indexI"]
 		names(SregionFitted) = dataOrder[rownames(lincombFrame),region.id]
 		
@@ -303,8 +305,7 @@ formulaForLincombs = gsub("\\+[[:space:]]?$|^[[:space:]]?\\+[[:space:]]+", "", f
 			warning("the dataset appears to have no rows")
 
 		lcFitted <- apply(lincombMat, 1, lcOneRow, idxCol=c("region.indexI","region.indexS"))
-		names(lcFitted) = paste("fitted_", lincombMat[,"region.indexS"],sep="")
-
+		names(lcFitted) = paste("fitted_", rownames(lincombMat),sep="")
 
 		inlaLincombs = c(inlaLincombs, lcFitted)
 		
@@ -535,16 +536,8 @@ formulaForLincombs = gsub("\\+[[:space:]]?$|^[[:space:]]?\\+[[:space:]]+", "", f
 				thesummary[,colnames(params$summary),drop=FALSE]
 				)		
 }
-# sum(c(0,diff(params$sd$posterior[,"x"])) * params$sd$posterior[,"y"])
-# sum(c(0,diff(params$sd$prior[,"x"])) * params$sd$prior[,"y"])
-if(FALSE) {
-	plot(params$sdSpatial$prior, type='l',lwd=4)
-	lines(params$sdSpatial$posterior,col='orange',lwd=2)
-	
-	sum(params$sdSpatial$prior[,"y"])*range(diff(params$sdSpatial$prior[,"x"]))
-}	
 
- 
+
 
 
 

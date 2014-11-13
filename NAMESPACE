@@ -15,7 +15,7 @@ getSMR.SpatialPolygonsDataFrame,
 formatPopulation.data.frame,
 formatPopulation.list,
 formatPopulation.SpatialPolygonsDataFrame,
-excProb
+excProb, nbToInlaGraph
 )
 
 # Import all packages listed as Imports or Depends

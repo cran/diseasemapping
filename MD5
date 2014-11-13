@@ -1,6 +1,6 @@
-d80087e349ef700804e980f46fa6c4d6 *DESCRIPTION
-e7aad35ec00e7788cf258cd77796439a *NAMESPACE
-f868ca1e1d0e0512a99456f92c3880f2 *R/bym.R
+00813caefea09deddd4fd0a16011af37 *DESCRIPTION
+d1c884789c0dd90b0addc083814cadf7 *NAMESPACE
+e0bc66e31ecf464224859cca1102bcb1 *R/bym.R
 2cadfd3fc87e029b9944ef5ff071bb67 *R/cancerRates.R
 3de72f5dc99bb2d1e1691eb0b83b6fa4 *R/computeArea.r
 cbbc1420435946688ea71021111a243a *R/excProb.R
@@ -21,7 +21,7 @@ a225deb503b779f8ccba28fc452c827f *data/casedata.RData
 b0b5f689cf97b76bd0178dd9eb888c21 *data/kentucky.RData
 8fd7b107f8e678d60c95306b3d1d9b6b *data/popdata.RData
 c0215bcd5e3452d034ea90c433e76f84 *data/referencepop.RData
-ef58ddc61fe02df822140df159c64fa3 *man/bym.Rd
+1425f54e608db1cb7650daab0ab96b0e *man/bym.Rd
 dd5a222cb5caf4bf6a66193a300f3918 *man/cancerRates.Rd
 4499ced888d149e547708f5d1593245c *man/casedata.Rd
 96f5d655bec5ecc808bf61bf6049bd8a *man/diseasemapping-package.Rd

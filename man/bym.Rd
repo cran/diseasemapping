@@ -8,7 +8,7 @@
 \alias{bym,formula,SpatialPolygonsDataFrame,missing,character-method}
 \alias{bym,formula,SpatialPolygonsDataFrame,nb,character-method}
 \alias{bym,formula,data.frame,nb,character-method}
-
+\alias{nbToInlaGraph}
 
 
 \title{
@@ -27,6 +27,7 @@ Uses inla to fit a Besag, York and Mollie disease mapping model
 formula,data,adjMat,region.id,
 priorCI=list(sdSpatial=c(0.01,2),sdIndep=c(0.01,2)),
 family="poisson",formula.fitted=formula,...)
+nbToInlaGraph(adjMat, graphFile="graph.dat")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -40,6 +41,7 @@ The observations and covariates for the model, can be output from
 }
 \item{adjMat}{An object of class \code{nb} containing the adjacency matrix.  If not supplied
 it will be computed from \code{data}, but is required if \code{data} is a SpatialPolygonDataFrame}
+\item{graphFile}{name of file to save adjacency matrix to.}
 \item{region.id}{Variable in \code{data} giving identifiers for the spatial regions.  
 If not supplied, row numbers will be used.}
 \item{priorCI}{prior 95 pct intervals for the standard deviation of the spatial and
