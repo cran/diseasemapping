@@ -1,6 +1,11 @@
+havePackages = c(
+  'INLA' = requireNamespace('INLA', quietly=TRUE),
+  "spdep" = requireNamespace('spdep', quietly=TRUE)
+)
+
+print(havePackages)
 
 library('diseasemapping')
-
 data('kentucky')
 
 if(FALSE) {
@@ -24,11 +29,16 @@ if(FALSE) {
 kentucky = getSMR(kentucky, larynxRates, larynx,
 		regionCode="County")
 
-if( 	require("spdep", quiet=TRUE) &
-		require('INLA', quietly=TRUE)
-		){
-	
-kBYM = bym(observed ~ offset(logExpected) + poverty,kentucky, 
+if(all(havePackages)){
+
+  kBYM = bym(observed ~ offset(logExpected) + poverty,
+      kentucky,
+      priorCI = list(sdSpatial=c(0.1, 5), sdIndep=c(0.1, 5))
+  )
+
+  kBYM = bym(observed ~ offset(logExpected) + poverty,
+    kentucky,
+    region.id='County',
 		priorCI = list(sdSpatial=c(0.1, 5), sdIndep=c(0.1, 5)))
 
 # also try no covariate or prior
@@ -66,7 +76,7 @@ colExc = colourScale(kBYM$data$exc1 ,
 # and try passing a data frame and adjacency matrix
 
 	
-adjMat = poly2nb(kentucky, row.names =as.character(kentucky$County) )
+adjMat = spdep::poly2nb(kentucky, row.names =as.character(kentucky$County) )
 kBYM = bym(data=kentucky@data, formula=observed ~ offset(logExpected) + poverty,
 		adjMat = adjMat, region.id="County",
 		priorCI = list(sdSpatial=c(0.1, 5), sdIndep=c(0.1, 5)))
@@ -75,11 +85,14 @@ kBYM$par$summary
 
 # add subtract a few regions
 
-kBYM = bym(data=kentucky@data[-(1:4),],  formula=observed ~ offset(logExpected) + poverty,
-		adjMat = adjMat, region.id="County",
+kBYM = bym(
+    formula=observed ~ offset(logExpected) + poverty,
+    data=kentucky@data[-(1:4),],  
+ 	  adjMat = adjMat, region.id="County",
 		priorCI = list(sdSpatial=c(0.1, 5), sdIndep=c(0.1, 5)))
  
 
+kBYM$par$summary
 
 # intercept only, no offset
 

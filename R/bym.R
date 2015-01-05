@@ -230,7 +230,7 @@ bym.data.frame = function(formula, data,adjMat,		region.id,
 		rownames(dataToAdd) = paste("missing",notInData,sep="")
 		dataToAdd[,"region.indexI"] = dataToAdd[,"region.indexS"]=notInData
 	# set response to missing
-		dataToAdd[,formulaLhs(formula)] = NA		
+		dataToAdd[,all.vars(formula)[1]] = NA		
 		data = rbind(data, dataToAdd)
 	}
 
@@ -250,8 +250,14 @@ bym.data.frame = function(formula, data,adjMat,		region.id,
 
 		
 		# fitted values
- 
-formulaForLincombs = formulaRhs(formula.fitted,char=TRUE)
+
+ # get rid of left side of formula
+#  formulaForLincombs =  formulaRhs(formula.fitted,char=TRUE)
+formulaForLincombs = base::format(formula.fitted)
+# if there is a line break in the formula, 
+# format(formula) will create a vector
+formulaForLincombs = paste(formulaForLincombs, collapse="")
+formulaForLincombs = gsub("^.*~", "", toString(formulaForLincombs))
  
 # get rid of f(stuff) in formula
 formulaForLincombs =
@@ -305,7 +311,7 @@ formulaForLincombs = gsub("\\+[[:space:]]?$|^[[:space:]]?\\+[[:space:]]+", "", f
 			warning("the dataset appears to have no rows")
 
 		lcFitted <- apply(lincombMat, 1, lcOneRow, idxCol=c("region.indexI","region.indexS"))
-		names(lcFitted) = paste("fitted_", rownames(lincombMat),sep="")
+		names(lcFitted) = paste("fitted_", dataOrder[rownames(lincombMat), region.id],sep="")
 
 		inlaLincombs = c(inlaLincombs, lcFitted)
 		
@@ -332,7 +338,7 @@ formulaForLincombs = gsub("\\+[[:space:]]?$|^[[:space:]]?\\+[[:space:]]+", "", f
 
 
 	# run inla!		
-	if(require("INLA", quietly=TRUE)) { # not enough to have requireNamespace
+	if(requireNamespace("INLA", quietly=TRUE)) { # not enough to have requireNamespace
 		inlaRes = INLA::inla(formula, data=data , family=family,
 			lincomb=inlaLincombs, ...)
 	} else{

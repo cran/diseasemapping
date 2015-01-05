@@ -18,6 +18,9 @@ formatPopulation.SpatialPolygonsDataFrame,
 excProb, nbToInlaGraph
 )
 
+# only needed because INLA is requireNamespace instead of require
+export(inla.models)
+
 # Import all packages listed as Imports or Depends
 import(
   sp, methods
