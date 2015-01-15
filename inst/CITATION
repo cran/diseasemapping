@@ -1,0 +1,34 @@
+citHeader("To cite diseasemapping in publications use:")
+
+citEntry(entry = "Article",
+  title        = "Model-Based Geostatistics the Easy Way",
+  author       = personList(as.person("Patrick E. Brown")),
+  journal      = "Journal of Statistical Software",
+  year         = "2015",
+  volume       = "63",
+  number       = "12",
+  pages        = "1--24",
+  url          = "http://www.jstatsoft.org/v63/i12/",
+
+  textVersion  =
+  paste("Patrick E. Brown (2015).",
+        "Model-Based Geostatistics the Easy Way.",
+        "Journal of Statistical Software, 63(12), 1-24.",
+        "URL http://www.jstatsoft.org/v63/i12/.")
+)
+
+citEntry(entry = "Article",
+  title        = "MCMC for Generalized Linear Mixed Models with glmmBUGS",
+  author       = c(person("Patrick E. Brown"),
+  					person("L Zhou")
+  				),
+  journal      = "R-journal",
+  year         = "2010",
+  volume       = "2",
+  url          = "http://journal.r-project.org/archive/2010-1/RJournal_2010-1_Brown+Zhou.pdf",
+  textVersion  =
+  paste("Patrick E. Brown and L Zhou (2010).",
+        "MCMC for Generalized Linear Mixed Models with glmmBUGS.",
+        "R-journal, 2.",
+        "URL http://journal.r-project.org/archive/2010-1/RJournal_2010-1_Brown+Zhou.pdf.")
+)

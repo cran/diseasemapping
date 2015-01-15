@@ -1,4 +1,4 @@
-687d27732721323bae103272f3673ad4 *DESCRIPTION
+e286c38f5641eaa56c4d799b3b63b1fa *DESCRIPTION
 8bf9cf61798684f86bb2ab7f4d7c58d0 *NAMESPACE
 24ef41b3b6cab1e0ec2ec494ed198766 *R/bym.R
 2cadfd3fc87e029b9944ef5ff071bb67 *R/cancerRates.R
@@ -21,6 +21,7 @@ cd3fb3c8cf88de9d7ac1bf1a6d89b296 *data/casedata.RData
 2c0e99b81fdf57beb242187fcd1e15e8 *data/kentucky.RData
 8b5ca6bfad4b7934d34a06617e917934 *data/popdata.RData
 dfd9fde1dd5ef49f52a65361c7f4a9d4 *data/referencepop.RData
+3a425c985a6aa13686074ee4829494ac *inst/CITATION
 1425f54e608db1cb7650daab0ab96b0e *man/bym.Rd
 dd5a222cb5caf4bf6a66193a300f3918 *man/cancerRates.Rd
 4499ced888d149e547708f5d1593245c *man/casedata.Rd
