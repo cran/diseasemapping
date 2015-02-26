@@ -13,7 +13,7 @@ getBreaks <- function (colNames, breaks=NULL)
 	if(max(currentbreaks)<=max(ageLower))
 		currentbreaks = c(currentbreaks, Inf)
 	
-    sex <- substr(popColumns, 1, 1)
+    sex <- toupper(substr(popColumns, 1, 1))
 
     result = list(breaks = currentbreaks, age = ageLower, 
         sex = sex, oldNames = popColumns, newNames = paste(toupper(sex), 

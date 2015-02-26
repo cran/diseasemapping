@@ -1,23 +1,30 @@
-\name{formatPopulation}
+\name{formatPopulation-methods}
+\docType{methods}
 \alias{formatPopulation}
-\alias{formatPopulation.data.frame}
-\alias{formatPopulation.list}
-%\alias{formatPopulation.PostgreSQLConnection}
-\alias{formatPopulation.SpatialPolygonsDataFrame}
-\title{Format the population data set }
+\alias{formatPopulation-methods}
+\alias{formatPopulation,data.frame-method}
+\alias{formatPopulation,SpatialPolygonsDataFrame-method}
+\alias{formatPopulation,list-method}
+
+\title{Format a population data set }
 \description{
  The formatCases funtion formats the population data set. 
 Reshape the population data set to "long" format, 
 add in 4 columns : GROUP, POPULATION, sex and age. 
 }
 \usage{
-formatPopulation(popdata, aggregate.by = NULL, breaks = NULL, ...)
-\method{formatPopulation}{data.frame}(popdata, aggregate.by=NULL, breaks=NULL,...)
-\method{formatPopulation}{list}(popdata, aggregate.by=NULL, breaks = NULL, 
-  years=as.integer(names(popdata)), year.range=NULL,  time="YEAR", personYears=TRUE, 
-  S=c("M", "F"),...)
-%formatPopulation.PostgreSQLConnection(dbname, user="postgres",driver="PostgreSQL",aggregate=FALSE)
-\method{formatPopulation}{SpatialPolygonsDataFrame}(popdata, ...)
+\S4method{formatPopulation}{data.frame}(
+popdata, aggregate.by = NULL, breaks = NULL, ...
+)
+\S4method{formatPopulation}{SpatialPolygonsDataFrame}(
+popdata, aggregate.by = NULL, breaks = NULL, ...
+)
+\S4method{formatPopulation}{list}(
+popdata, aggregate.by = NULL, breaks = NULL,  
+	years=as.integer(names(popdata)), year.range=NULL, 
+	 time="YEAR", 
+        personYears=TRUE,...
+)
 }
 
 \arguments{
@@ -28,13 +35,11 @@ formatPopulation(popdata, aggregate.by = NULL, breaks = NULL, ...)
 %  \item{user}{}
   \item{breaks}{ age breaks the user want to use. i.e breaks = c(10, 20, 30 ,40, 60, Inf). }
 %  \item{driver}{}
-  \item{years}{the years vector}
-  \item{aggregate}{if \code{TRUE} then aggregate the population data}
-  \item{year.range}{the range of the year vector}
   \item{time}{the time variable, i.e years}
   \item{personYears}{convert populations to person-years}
-  \item{S}{ can choose both or either of each sex.}
-  \item{\dots}{ additional arguments. }
+  \item{years}{a vector with the year of each dataset}
+  \item{year.range}{two dimensional vector with first and last year}
+  \item{\dots}{ additional arguments }
 }
 \details{
   After using the \code{formatPopulation} function, it will return the population data set in the same class as the original data set. 

@@ -1,17 +1,21 @@
-\name{mergeBugsData}
+\name{mergeBugsData-methods}
+\docType{methods}
 \alias{mergeBugsData}
-\alias{mergeBugsData.SpatialPolygonsDataFrame}
-\alias{mergeBugsData.data.frame}
+\alias{mergeBugsData-methods}
+\alias{mergeBugsData,data.frame-method}
+\alias{mergeBugsData,SpatialPolygonsDataFrame-method}
 
-
-\title{ merge the result from bugs function}
+\title{Merge results from BUGS into a data.frame or SPDF}
 \description{
  merge the result from bugs function
 }
 \usage{
-mergeBugsData(x, bugsSummary, by.x = NULL, newcol = "mean", ...)
-\method{mergeBugsData}{SpatialPolygonsDataFrame}(x, bugsSummary, by.x=NULL, newcol="mean", ...) 
-\method{mergeBugsData}{data.frame}(x, bugsSummary, by.x=NULL, newcol="mean", ...)
+\S4method{mergeBugsData}{data.frame}(
+x, bugsSummary, by.x = NULL, newcol = "mean", ...
+)
+\S4method{mergeBugsData}{SpatialPolygonsDataFrame}(
+x, bugsSummary, by.x = NULL, newcol = "mean", ...
+)
 }
 
 \arguments{

@@ -98,7 +98,7 @@ qcLungF
 
 data('popdata')
 
-qcLungExp = getSMR(popdata, qcLungF, regionCode='CSDUID')
+qcLungExp = getSMR(popdata, qcLungF)
 
 names(qcLungExp)
 

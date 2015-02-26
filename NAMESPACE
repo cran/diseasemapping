@@ -3,20 +3,17 @@
 
 # Export all names
 export(
-bym, cancerRates,  formatCases, formatPopulation,
-getRates, getSMR, getStdRate, 
-mergeBugsData,
-mergeBugsData.SpatialPolygonsDataFrame, 
-mergeBugsData.data.frame, 
+bym, cancerRates,  formatCases, 
+getRates,  getStdRate, 
 getBreaks,
-getSMR.data.frame, 
-getSMR.list,
-getSMR.SpatialPolygonsDataFrame,
-formatPopulation.data.frame,
-formatPopulation.list,
-formatPopulation.SpatialPolygonsDataFrame,
 excProb, nbToInlaGraph
 )
+
+export(getSMR)
+
+export(formatPopulation)
+
+export(mergeBugsData)
 
 # only needed because INLA is requireNamespace instead of require
 export(inla.models)

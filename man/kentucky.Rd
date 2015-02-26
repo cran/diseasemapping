@@ -20,14 +20,27 @@ deliberately unspecified year.
 
 
 \examples{
-data(kentucky)
-
+data('kentucky')
 
 head(larynx)
 10^5*larynxRates[paste(c("M","F"), 50, sep="_")]
 
+
 kentucky2 = getSMR(kentucky, larynxRates, larynx, 
 		regionCode="County")
+
+names(kentucky2)
+
+if(require('mapmisc', quietly=TRUE)) {
+	mycol = colourScale(kentucky2$SMR, 
+		breaks=10, dec=-log10(0.5), style='quantile')
+	map.new(kentucky2)
+	plot(kentucky2, col=mycol$plot, border='#00000040',add=TRUE)
+	legendBreaks('topright', mycol)
+	scaleBar(kentucky2,"topleft")
+} else {
+	plot(kentucky2)
+}
 
 breaks = c(0,1,seq(2, ceiling(max(kentucky2$SMR,na.rm=TRUE)),by=2))
 thecol = terrain.colors(length(breaks)-1)

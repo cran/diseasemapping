@@ -1,14 +1,20 @@
-mergeBugsData = function(x, bugsSummary, by.x = NULL, newcol="mean", ...) {
-  UseMethod("mergeBugsData")
-}
+setGeneric('mergeBugsData', 
+    function(x, bugsSummary, by.x = NULL, newcol="mean", ...) {
+      standardGeneric("mergeBugsData")
+    }
+)
 
-mergeBugsData.SpatialPolygonsDataFrame =
-  function(x, bugsSummary, by.x=NULL, newcol="mean", ...) {
-    x@data = mergeBugsData(x@data, bugsSummary, by.x, newcol, ...)
-    x
+ 
+ setMethod("mergeBugsData", 
+        signature("SpatialPolygonsDataFrame"),
+        function(x, bugsSummary, by.x=NULL, newcol="mean", ...) {
+    callGeneric(x@data, bugsSummary, by.x, newcol, ...)
 }
+)
 
-mergeBugsData.data.frame = function(x, bugsSummary,
+setMethod("mergeBugsData", 
+    signature("data.frame"),
+    function(x, bugsSummary,
    by.x=NULL, newcol="mean", ...) {
 
   if(!is.list(bugsSummary)) {
@@ -60,3 +66,4 @@ mergeBugsData.data.frame = function(x, bugsSummary,
   
   x
 }
+)

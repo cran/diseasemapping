@@ -1,40 +1,77 @@
-\name{getSMR}
+\name{getSMR-methods}
+\docType{methods}
 \alias{getSMR}
-\alias{getSMR.data.frame}
-\alias{getSMR.list}
-%\alias{getSMR.PostgreSQLConnection}
-\alias{getSMR.SpatialPolygonsDataFrame}
-\title{Calculate the standardized mortality/morbidity ratios   }
+\alias{getSMR-methods}
+\alias{getSMR,data.frame,numeric,missing,ANY,ANY-method}
+\alias{getSMR,data.frame,glm,missing,ANY,ANY-method}
+\alias{getSMR,data.frame,ANY,data.frame,missing,missing-method}
+\alias{getSMR,data.frame,ANY,data.frame,character,missing-method}
+\alias{getSMR,data.frame,ANY,data.frame,character,character-method}
+\alias{getSMR,SpatialPolygonsDataFrame,ANY,ANY,ANY,ANY-method}
+\alias{getSMR,data.frame,list,missing,ANY,ANY-method}
+\alias{getSMR,list,list,missing,ANY,ANY-method}
+\alias{getSMR,list,ANY,data.frame,ANY,ANY-method}
+
+
+\title{Calculate the standardized mortality/morbidity ratios}
 \description{
-The getSMR function calculates the rate of observe value over expected value. 
+Calculates the rate of observe value over expected value. 
 It will also merge back the observed value, expected value and the ratio back to the population data set. 
 }
+
 \usage{
-getSMR(popdata, model, casedata, regionCode , regionCodeCases , 
-area = FALSE, area.scale = 1,  ...)
-\method{getSMR}{data.frame}(popdata, model, casedata=NULL, 
-regionCode =  intersect(names(popdata), names(casedata))[1], 
-regionCodeCases = regionCode, area=FALSE , area.scale=1, ...)
-\method{getSMR}{list}(popdata, model, casedata = NULL, regionCode , 
-regionCodeCases, area , area.scale , years = NULL, 
-personYears= TRUE, year.range = NULL, ...)
-\method{getSMR}{SpatialPolygonsDataFrame}(popdata, model, casedata=NULL, 
-		regionCode = intersect(names(popdata), names(casedata))[1],
-		regionCodeCases=regionCode, area=FALSE,  ...)
+\S4method{getSMR}{data.frame,numeric,missing,ANY,ANY}(
+popdata, model, casedata, regionCode , regionCodeCases , 
+area.scale = 1,  sex=c('m','f'),...
+)
+\S4method{getSMR}{data.frame,glm,missing,ANY,ANY}(
+popdata, model, casedata, regionCode , regionCodeCases , 
+area.scale = 1,  sex=c('m','f'),...
+)
+\S4method{getSMR}{data.frame,ANY,data.frame,missing,missing}(
+popdata, model, casedata, regionCode , regionCodeCases , 
+area.scale = 1,  sex=c('m','f'),...
+)
+\S4method{getSMR}{data.frame,ANY,data.frame,character,missing}(
+popdata, model, casedata, regionCode , regionCodeCases , 
+area.scale = 1,  sex=c('m','f'),...
+)
+\S4method{getSMR}{data.frame,ANY,data.frame,character,character}(
+popdata, model, casedata, regionCode , regionCodeCases , 
+area.scale = 1,  sex=c('m','f'),...
+)
+\S4method{getSMR}{data.frame,list,missing,ANY,ANY}(
+popdata, model, casedata, regionCode , regionCodeCases , 
+area.scale = 1,  sex=c('m','f'),...
+)
+\S4method{getSMR}{list,list,missing,ANY,ANY}(
+popdata, model, casedata, regionCode , regionCodeCases , 
+area.scale = 1,  sex=c('m','f'),...
+)
+\S4method{getSMR}{SpatialPolygonsDataFrame,ANY,ANY,ANY,ANY}(
+popdata, model, casedata, regionCode , regionCodeCases , 
+area.scale = 1,  sex=c('m','f'),...
+)
+\S4method{getSMR}{list,ANY,data.frame,ANY,ANY}(
+popdata, model, casedata, regionCode , regionCodeCases , 
+area.scale=1,   years = NULL, 
+personYears=TRUE,year.range = NULL,...
+)
+
 }
 \arguments{
   \item{popdata}{ the name of population data set  }
   \item{model}{rates, either fitted model (usually a \code{glm} object), or a vector of rates. }
-  \item{\dots}{additional arguments}
   \item{casedata}{ the name of case data set }
   \item{regionCode}{ the name of district area column in population data set}
   \item{regionCodeCases}{the name of district area column in case data set }
-  \item{area}{ if \code{TRUE}, calculate the expected number of cases per area in each region }
-  \item{area.scale}{  control the unit of area. e.g $10^6$: per square kilometers }
-  \item{years}{the vector of years}
-  \item{personYears}{ a logic variable. If \code{TRUE}, it compute offset adding person years}
-  \item{year.range}{the range of the year vector} 
-  
+  \item{area.scale}{ scale the unit of area. e.g $10^6$: if your spatial coordinates are metres 
+  and you want intensity in cases per km2 }
+  \item{sex}{possible subsetting of cases and population, set \code{sex='f'} for females only.}
+  \item{personYears}{convert populations to person-years}
+  \item{years}{a vector with the year of each dataset}
+  \item{year.range}{two dimensional vector with first and last year}
+ \item{\dots}{ additional arguments}
 }
 \details{
 If \code{model} is numeric, it's assumed to be a vector of rates, with the names of the elements corresponding to columns of the population data set.  Names do not need to match exactly (can have M in one set of names, male in another for instance).
