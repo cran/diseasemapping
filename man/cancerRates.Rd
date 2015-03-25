@@ -1,7 +1,5 @@
 \name{cancerRates}
-\Rdversion{1.1}
 \alias{cancerRates}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 Download cancer incidence rates from the International Agency for Research on Cancer (IARC)
 }
@@ -106,12 +104,9 @@ if(require('mapmisc', quietly=TRUE)) {
 
 	mycol = colourScale(qcLungExp$expected, 
 		breaks=9, dec=0, transform='log', style='equal')
-	map.new(
-		popdata[grep("Stormont|Thunder Bay|Lambton", popdata$CDNAME),]
-	)
+	plot(popdata[1:400,])
 	plot(qcLungExp, col=mycol$plot, border='#00000040',add=TRUE)
 	legendBreaks('topright', mycol)
-	scaleBar(qcLungExp,"bottomleft")
 }
 
 }

@@ -13,9 +13,10 @@ kentucky1@data[1:4,c(1,2,grep("expected", names(kentucky1),ignore.case=TRUE))]
 if(require('mapmisc', quietly=TRUE)) {
 #  kmap = openmap(kentucky)
   col = colourScale(
-      kentucky1$expected_surfaceArea,
-      style='quantile', 
-      breaks=20, dec=-1,opacity=c(0.6,1)
+      kentucky1$expected,
+      style='fixed',  
+      breaks=c(0:5,max(kentucky1$expected)), 
+    dec=0,opacity=c(0.6,1)
   )
 
   map.new(kentucky)

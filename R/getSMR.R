@@ -68,7 +68,10 @@ setMethod("getSMR",
       
       newBreaks = getBreaks(intersect(rateBreaks$newNames, popBreaks$newNames))
       
-      newModel = data.frame(age=rateBreaks$age, sex=rateBreaks$sex, 
+      
+      newModel = data.frame(
+          age=rateBreaks$age, 
+          sex=rateBreaks$sex, 
           rate=model)
       newModel = formatCases(newModel, newBreaks)
       newModel = aggregate(newModel$rate, 
@@ -294,7 +297,7 @@ setMethod("getSMR",
         sex=c('m','f'), ...
     ) {
       
-      area = length(grep("longlat", popdata@proj4string@projargs))
+      area = !length(grep("longlat", popdata@proj4string@projargs))
       
       if (area & !("surfaceArea" %in% names(popdata) ) ) {
         popdata$surfaceArea = sapply(slot(popdata, "polygons"), slot, "area")
@@ -327,16 +330,18 @@ setMethod("getSMR",
           'logExpected_surfaceArea', 'logExpected'
           )
       
-      
+          
       if(!length(names(model))){
         names(model) = as.character(1:length(model))
       }
       
       result =  as.data.frame(matrix(NA, nrow(popdata), 0))
       
-      for(Drate in names(model)){
-        toBind = callGeneric(popdata, model[[Drate]],
-            area.scale=area.scale, sex=sex)
+      
+      modelFull = model
+       for(Drate in names(modelFull)){
+        model=modelFull[[Drate]]
+        toBind = callGeneric()
         toBind = toBind[,intersect(colnames(toBind), keepCols)]
         names(toBind) = paste(
             names(toBind), Drate, sep="_"
@@ -385,12 +390,14 @@ setMethod("getSMR",
       
       
     result = list()
+    
+
     for(Dcensus in Scensus){
-      popdata = popDataFull[[as.character(Dcensus)]]
+       popdata = popDataFull[[as.character(Dcensus)]]
       model = modelFull[
           rateCut==Dcensus
           ]
-      result[[
+       result[[
           as.character(Dcensus)
       ]] = callGeneric()
     }

@@ -37,7 +37,6 @@ if(require('mapmisc', quietly=TRUE)) {
 	map.new(kentucky2)
 	plot(kentucky2, col=mycol$plot, border='#00000040',add=TRUE)
 	legendBreaks('topright', mycol)
-	scaleBar(kentucky2,"topleft")
 } else {
 	plot(kentucky2)
 }

@@ -528,6 +528,7 @@ formulaForLincombs = gsub("\\+[[:space:]]?$|^[[:space:]]?\\+[[:space:]]+", "", f
 						inlaRes$marginals.hyperpar[[imname]][,"y"]
 		)
 		thesummary[,"sd"] = NA
+    thesummary[,'mode'] =  1/sqrt(thesummary[,'mode'])
 		rownames(thesummary) = Dname
  
 		

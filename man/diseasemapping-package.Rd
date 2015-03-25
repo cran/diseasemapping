@@ -47,7 +47,6 @@ if(require('mapmisc', quietly=TRUE)) {
 	dec=-log10(0.5), style='equal', transform='sqrt')
 	plot(kentucky2, col=mycol$plot)
 	legendBreaks('topleft', mycol)
-	scaleBar(kentucky2,"topright")
 }
 
 if( require("spdep", quietly=TRUE) & require("INLA", quietly=TRUE)) {
@@ -121,9 +120,6 @@ mycol = colourScale(ontario2$mean, breaks=9,
 	dec=1, style='equal', transform='sqrt')
 plot(ontario2, col=mycol$plot)
 legendBreaks('topleft', mycol)
-scaleBar(ontario2,"topright")
-
-
 	
 }
 

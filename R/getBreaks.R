@@ -1,8 +1,9 @@
 getBreaks <- function (colNames, breaks=NULL) 
 {
-    popColumns <- grep("^(m|f|male|female)(_|\\.)?[[:digit:]]+(_|-|to|plus|\\+)?[[:digit:]]*$", 
+    popColumns <- grep(
+        "^([[:space:]]+)?(m|f|male|female)(_|\\.)?[[:digit:]]+(_|-|to|plus|\\+)?[[:digit:]]*$", 
         colNames, value = TRUE, ignore.case = TRUE)
-    ageGroups <- gsub("^(m|f|male|female)(\\.|_)?", "", popColumns, ignore.case = TRUE)
+    ageGroups <- gsub("^([[:space:]]+)?(m|f|male|female)(\\.|_)?", "", popColumns, ignore.case = TRUE)
     ageGroups <- gsub("(\\+|plus)", "_Inf", ageGroups, ignore.case = TRUE)
     ageLower <- as.numeric(gsub("(_|-|to|\\.)([[:digit:]]+|Inf)$", "", 
         ageGroups))
@@ -19,7 +20,7 @@ getBreaks <- function (colNames, breaks=NULL)
         sex = sex, oldNames = popColumns, newNames = paste(toupper(sex), 
             ageLower, sep = "."))
 
-if(length(breaks)> 0 ) {
+if(length(breaks) ) {
  # check that the breaks are valid
 
 # make sure that the right end of the last bin is Inf
