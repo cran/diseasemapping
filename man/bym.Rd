@@ -70,7 +70,7 @@ Patrick Brown
 
 
 \seealso{
-http://r-inla.org, \code{\link[geostatsp]{glgm}}, \code{\link[diseasemapping]{getSMR}} 
+\url{http://r-inla.org}, \code{\link[geostatsp]{glgm}}, \code{\link[diseasemapping]{getSMR}} 
 }
 \examples{
 

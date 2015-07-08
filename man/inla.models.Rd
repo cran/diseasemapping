@@ -13,5 +13,5 @@ inla.models()
 a list
 }
 \seealso{
-\code{\link[INLA]{inla.models}}
+\url{http://r-inla.org}
 }

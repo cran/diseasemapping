@@ -6,7 +6,7 @@ export(
 bym, cancerRates,  formatCases, 
 getRates,  getStdRate, 
 getBreaks,
-excProb, nbToInlaGraph
+nbToInlaGraph
 )
 
 export(getSMR)
@@ -20,8 +20,10 @@ export(inla.models)
 
 # Import all packages listed as Imports or Depends
 import(
-  sp, methods
+  sp, methods, stats
 )
+
+importFrom(utils, read.table)
 
 
 # also uses spdep::poly2nb

@@ -1,3 +1,6 @@
+ci5zip = 'http://ci5.iarc.fr/CI5plus/old/CI5plus.zip'
+canZip = 'http://www20.statcan.gc.ca/tables-tableaux/cansim/csv/01030550-eng.zip'
+
 cancerRates = function(area = "canada",
    year=2000, sex=c("M", "F"), site="Lung") {
 
@@ -87,5 +90,3 @@ attributes(rates)$year = gsub("\\)$", "", forAttribute[length(forAttribute)])
 return(rates)
 
 }
-
-

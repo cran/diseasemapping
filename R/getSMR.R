@@ -454,6 +454,8 @@ function(popdata, model, casedata, regionCode,
   
   result=list()
   
+  area = !length(grep("longlat", popdata[[1]]@proj4string@projargs))
+  
   #for(Dyear in seq(1, length(popdata))) {
   for(Dyear in names(popdata)) {
     
