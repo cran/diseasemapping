@@ -13,7 +13,6 @@ export(getSMR)
 
 export(formatPopulation)
 
-export(mergeBugsData)
 
 # only needed because INLA is requireNamespace instead of require
 export(inla.models)

@@ -1,9 +1,9 @@
 Package: diseasemapping
 Type: Package
 Title: Modelling Spatial Variation in Disease Risk for Areal Data
-Version: 1.2.3
-Date: 2015-07-06
-Depends: sp, R (>= 3.0)
+Version: 1.2.7
+Date: 2015-11-04
+Depends: sp, R (>= 3.2)
 Imports: methods, stats, utils
 Suggests: mgcv, spdep, geostatsp, mapmisc (>= 1.0)
 Enhances: INLA
@@ -14,8 +14,8 @@ Description: Formatting of population and case data, calculation of Standardized
 License: GPL
 Repository: CRAN
 Repository/R-Forge/Project: diseasemapping
-Repository/R-Forge/Revision: 1190
-Repository/R-Forge/DateTimeStamp: 2015-07-07 16:23:56
-Date/Publication: 2015-07-08 00:32:43
+Repository/R-Forge/Revision: 1284
+Repository/R-Forge/DateTimeStamp: 2015-11-05 03:35:14
+Date/Publication: 2015-11-09 15:10:54
 NeedsCompilation: no
-Packaged: 2015-07-07 16:45:15 UTC; rforge
+Packaged: 2015-11-05 03:50:34 UTC; rforge

@@ -1,6 +1,6 @@
-1a2e3076f45688154e4c4488b743514c *DESCRIPTION
-25a4ff21f57489d3a5f9b451a38a1662 *NAMESPACE
-d6a2209f322987c2de767f8169cf1718 *R/bym.R
+182ebe58df1790a30fc4bf0f935c34a3 *DESCRIPTION
+f69be46a56aa8d35636d28ec3e066ace *NAMESPACE
+7a8c811e6a0ce4b12ce541bbb928b000 *R/bym.R
 672b66bd13680f6129c4cc39564a7926 *R/cancerRates.R
 3de72f5dc99bb2d1e1691eb0b83b6fa4 *R/computeArea.r
 cc14a5426a4c5c0ef5a4abee2e270214 *R/expandCensus.r
@@ -11,11 +11,10 @@ ccf81e5ea375ca3689fa1e322d256e87 *R/formatPopulation.R
 f2f961b3257d4327e379c9f8b5488a40 *R/getRates.R
 d2ff6510fb5da5922cc1eec1b6e19860 *R/getSMR.R
 c9686fee15fd1500fe30f6d985dbf071 *R/getStdRate.R
-00c89881b68b57c442e745f5b9340f18 *R/mergeBugsData.R
-e5b2674a6032abb7fb3b8d1b32049011 *data/casedata.RData
-0d64065f28ca022adafc528784bb4084 *data/kentucky.RData
-2f79c582c60d78be44126dcc12dcb90a *data/popdata.RData
-68125cf3f4d3970c84317f3c8759aa01 *data/referencepop.RData
+76dfb75e5f62f6f86438be47fc6c6c49 *data/casedata.RData
+e2a60bda96bbf2799c5eca408904f420 *data/kentucky.RData
+46dc111508edbebe512cd08a9f7dcf29 *data/popdata.RData
+09e08ac20820cbc63a02a4c97ad97604 *data/referencepop.RData
 3a425c985a6aa13686074ee4829494ac *inst/CITATION
 72a9b1e520e14352b4148fd262234bad *man/bym.Rd
 8b0f2aa9a58c11a428c52b670a3b7a27 *man/cancerRates.Rd
@@ -29,10 +28,9 @@ e3579e2a1e94f5f80cf4e9b0c305d319 *man/getSMR.Rd
 e04ab0dca8ab754b76f55a1451750d03 *man/getStdRate.Rd
 1529044ec08658ea77df7a3a60b43c12 *man/inla.models.Rd
 51bbe0715ba058a7d1f7ab8e39af3974 *man/kentucky.Rd
-addfbfc50216f8122454511b61cc939f *man/mergeBugsData.Rd
 d43117be55da8e9d5bf185c47ccb41c0 *man/popdata.Rd
 118297de61acad25ba88f186368b374c *man/referencepop.Rd
-58dc348fd706c403fa659da8a505bb61 *tests/bym.R
+cc8e2c10f0585093b7d53192e3041a94 *tests/bym.R
 aca79ec54b949c009e3b19bd215bf7da *tests/cancerRates.R
 a226e77df0d1d650965ba0909d0158d4 *tests/getRates.R
 a769c7ded6dcaaeabf6dce49d2c2da3d *tests/getSMR.R
