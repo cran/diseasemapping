@@ -33,10 +33,12 @@ if(all(havePackages)){
 
   kBYM = bym(
 			formula = observed ~ offset(logExpected) + poverty,
-      data=kentucky,
+      data=kentucky@data,
+			adjMat = spdep::poly2nb(kentucky, row.names=kentucky$County),
       priorCI = list(sdSpatial=c(0.1, 5), sdIndep=c(0.1, 5)),
 			region.id="County"
   )
+	kBYM$parameters$summary
 
 	pdf("priorPostKentucky.pdf")
 	plot(kBYM$parameters$sdSpatial$posterior, type='l', 
@@ -44,11 +46,9 @@ if(all(havePackages)){
 	lines(kBYM$parameters$sdSpatial$prior, col='blue')
 	legend('topright', lty=1, col=c('black','blue'), legend=c('posterior','prior'))
 	dev.off()
-	
-  kBYM = bym(observed ~ offset(logExpected) + poverty,
-    kentucky,
-		priorCI = list(sdSpatial=c(0.1, 5), sdIndep=c(0.1, 5)))
 
+	
+	
 
 
 # also try no covariate or prior
@@ -157,9 +157,5 @@ kBYM = bym(
 
 kBYM$par$summary
 }
-if(FALSE){
-	
-	
-	
-	
-}
+
+
