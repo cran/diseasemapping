@@ -127,7 +127,11 @@ usCancer = function(
 				
 				fname = grep('newalldetails[[:alnum:]]+\\.html$', fname, value=TRUE)
 
-				datHeader = XML::readHTMLTable(fname[1], isUrl=FALSE, which=2)[1,]
+				if(requireNamespace("XML", quietly=TRUE)) {
+					datHeader = XML::readHTMLTable(fname[1], isUrl=FALSE, which=2)[1,]
+				} else {
+					warning("install the XML package to use usCancer")
+				}
 				
 				datText = scan(fname[1], what=character(), quiet=TRUE)
 				

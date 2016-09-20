@@ -1,4 +1,4 @@
-# the function body:
+#' @export
 getStdRate= function(relativeRate, model, referencePopulation, scale=100000) {
 
 # check for negatives
@@ -59,7 +59,7 @@ if(length(interactNA)>0){
 
 
 		
-referenceRate <- sum(predict(model, newpop[,c("age","sex","logpop")], type = "response"))
+referenceRate <- sum(stats::predict(model, newpop[,c("age","sex","logpop")], type = "response"))
 
 }
 

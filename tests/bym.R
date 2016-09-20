@@ -36,7 +36,8 @@ if(all(havePackages)){
       data=kentucky@data,
 			adjMat = spdep::poly2nb(kentucky, row.names=kentucky$County),
       priorCI = list(sdSpatial=c(0.1, 5), sdIndep=c(0.1, 5)),
-			region.id="County"
+			region.id="County",
+			control.predictor=list(compute=TRUE)
   )
 	kBYM$parameters$summary
 

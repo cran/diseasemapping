@@ -19,40 +19,34 @@ setClass('nb',
 		)
 )
 
+#' @export
 `nbToInlaGraph` = function(adjMat, graphFile="graph.dat")
 {
-	## A function for converting GeoBUGS adjacency data into the INLA
-	## graph format. Kindly provided by Aki Havunlinna tkk.fi; thanks.
-	# edited by Patrick Brown to allow for some regions having no neighbours
-	
-	fd = file(graphFile,  "w")
-	len <- length(adjMat)
 
-	cat(len, '\n', file=fd)
-	k = 1L
-	for(i in 1L:len) {
-		num=adjMat[[i]]
-		lnum = length(num)
-		if (num[1] == "0" | lnum==0 ) {
-			cat(i, "0", "\n", file=fd)
-		} else {
-			cat(i, lnum, 
-					num, "\n", file = fd)
-		}
-	}
-	close(fd)
-
+	nbList = methods::as(adjMat, 'list')
+	# get rid of zeros, they mean a region has no neighbours
+	nbList = lapply(nbList, function(x) x[x>0])
 	
-	region.index = 1:len
+	nbLength = unlist(lapply(nbList, length))
+	inlaVec = unlist(lapply(nbList, paste, collapse=' '))
+	inlaGraph = c(length(nbList), paste(1:length(nbList), nbLength, inlaVec))
+	inlaGraph = paste(inlaGraph, collapse='\n')
+
+	cat(paste(inlaGraph, '\n',sep=''), file=graphFile)
+
+	region.index = 1:length(adjMat)
 	region.id = attributes(adjMat)$region.id
 	if(is.null(region.id))
 		region.id = region.index
 	names(region.index) = as.character(region.id)
-		
-	return(region.index)
+	
+	attributes(region.index)$Nneighbours = nbLength
+
+	invisible(region.index)
 }
 
-
+#' @importClassesFrom sp SpatialPolygonsDataFrame
+#' @export
 setGeneric('bym', 
 		function(
 				formula, data, adjMat=NULL, region.id,
@@ -68,7 +62,7 @@ bym.spartan = function(
 	region.idX="region.id"
 	data[[region.idX]] = 1:length(data)
 	
-	callGeneric(
+	methods::callGeneric(
 			formula , data ,
 			adjMat , region.idX,
 			...
@@ -93,15 +87,6 @@ bym.needAdjmat = function(
  	
 	if(requireNamespace("spdep", quietly=TRUE)) {
 		adjMatNB=spdep::poly2nb(data, row.names =  data[[region.id]] )
-		Nneighbours = unlist(lapply(adjMatNB, length))
-		if(any(Nneighbours < 1)){
-			badNeighbours = which(Nneighbours < 1)
-			if(length(badNeighbours) == length(data))
-				stop('No spatial regions are neighbours of each other.')
-			warning('Removing ', length(badNeighbours), ' regions without neighbours')
-			data = data[-badNeighbours,]
-			adjMatNB=spdep::poly2nb(data, row.names =  data[[region.id]] )
-		}
 	} else {
 		adjMatNB = NULL
 		warning('spdep package is required for bym if adjMat is missing')
@@ -109,7 +94,7 @@ bym.needAdjmat = function(
 	}
 
 	
-	callGeneric(
+	methods::callGeneric(
 			formula=formula, data=data,
 			adjMat=adjMatNB, region.id=region.id,
 			...
@@ -134,7 +119,7 @@ setMethod("bym",
 			
 
 			
-			result = callGeneric(
+			result = methods::callGeneric(
 					formula=formula, data=data@data,
 					adjMat=adjMat,region.id=region.id,
 					...
@@ -166,7 +151,18 @@ bym.data.frame = function(formula, data,adjMat,		region.id,
 		graphfile = gsub("\\\\", "/", graphfile)
 		
 		region.index = nbToInlaGraph(adjMat, graphfile)
-
+		
+		# check for regions without neighbours
+		badNeighbours = which(
+				attributes(region.index)$Nneighbours < 1
+		)
+		if(length(badNeighbours)){
+			if(length(badNeighbours) == length(data))
+				stop('No spatial regions are neighbours of each other.')
+			warning('There are ', length(badNeighbours), ' regions without neighbours, consider removing these.')
+		}
+		
+		
 		# check for data regions missing from adj mat
 		data[[region.id]] = as.character(data[[region.id]])
 		if(!all(data[[region.id]] %in% names(region.index))  )
@@ -175,7 +171,7 @@ bym.data.frame = function(formula, data,adjMat,		region.id,
 		
 		
 		cifun = function(pars) {
-			theci = 	pgamma(obj1, shape=pars[1], rate=pars[2],log.p=T)
+			theci = 	stats::pgamma(obj1, shape=pars[1], rate=pars[2],log.p=T)
 			
 			(log(0.025) - theci[1])^2 +
 					(2*(log(0.975) - theci[2]))^2		
@@ -227,19 +223,19 @@ bym.data.frame = function(formula, data,adjMat,		region.id,
 			startSD = diff(obj1)/4
 			startShape = startSD^2/startMean^2
 			
-			precPrior2=optim(c(startShape,startShape/startMean), cifun, 
+			precPrior2=stats::optim(c(startShape,startShape/startMean), cifun, 
 					lower=c(0.000001,0.0000001),method="L-BFGS-B",
 					control=list(parscale=c(startShape,startShape/startMean)))
 			precPrior[[D]] = precPrior2$par
 			names(precPrior[[D]] ) = c("shape","rate")
 			
-			pgamma(obj1, shape= precPrior[[D]]["shape"], rate=precPrior[[D]]["rate"],log.p=F)
-			pgamma(obj1, shape= precPrior[[D]]["shape"], rate=precPrior[[D]]["rate"],log.p=T)
+			stats::pgamma(obj1, shape= precPrior[[D]]["shape"], rate=precPrior[[D]]["rate"],log.p=F)
+			stats::pgamma(obj1, shape= precPrior[[D]]["shape"], rate=precPrior[[D]]["rate"],log.p=T)
 			log(c(0.025, 0.975))
 			precPrior2
-			pgamma(obj1, shape=precPrior[[D]]["shape"], rate=precPrior[[D]]["rate"],log.p=T)
+			stats::pgamma(obj1, shape=precPrior[[D]]["shape"], rate=precPrior[[D]]["rate"],log.p=T)
 			log(c(0.025, 0.975)) 
-			1/sqrt(qgamma(c(0.975,0.025), shape=precPrior[[D]]["shape"], rate=precPrior[[D]]["rate"]))
+			1/sqrt(stats::qgamma(c(0.975,0.025), shape=precPrior[[D]]["shape"], rate=precPrior[[D]]["rate"]))
 			priorCI[[D]]
 			
 		} 
@@ -262,7 +258,7 @@ bym.data.frame = function(formula, data,adjMat,		region.id,
 	}	
 	
 	allVars = all.vars(formula)
-	formula = update(formula, as.formula(bymTerm))
+	formula = stats::update(formula, stats::as.formula(bymTerm))
 
 
 
@@ -317,7 +313,7 @@ formulaForLincombs = gsub("\\+[[:space:]]+?$|^[[:space:]]?\\+[[:space:]]+", "", 
 			!length(grep("^[[:space:]]+$", formulaForLincombs))
 		) { #make linear combinations
  
-		formulaForLincombs=as.formula(
+		formulaForLincombs=stats::as.formula(
 			paste("~", paste(c("1",formulaForLincombs),collapse="+"))
 		)
  
@@ -330,15 +326,15 @@ formulaForLincombs = gsub("\\+[[:space:]]+?$|^[[:space:]]?\\+[[:space:]]+", "", 
 		dataOrder = dataOrder[order(dataOrder$region.indexS),]
 
 		
-		lincombFrame = model.frame(formulaForLincombs, dataOrder,
-				na.action=na.omit)
+		lincombFrame = stats::model.frame(formulaForLincombs, dataOrder,
+				na.action=stats::na.omit)
 
 		
 		SregionFitted = dataOrder[rownames(lincombFrame),"region.indexS"]
 		names(SregionFitted) = dataOrder[rownames(lincombFrame),region.id]
 		
 		
-		lincombMat = model.matrix(formulaForLincombs, lincombFrame)
+		lincombMat = stats::model.matrix(formulaForLincombs, lincombFrame)
 		
 		lincombMat[lincombMat==0]= NA
 		lincombMat = cbind(lincombMat, region.indexS = dataOrder[rownames(lincombMat),"region.indexS"])
@@ -387,12 +383,13 @@ formulaForLincombs = gsub("\\+[[:space:]]+?$|^[[:space:]]?\\+[[:space:]]+", "", 
  	
 	if(all(names(inlaRes)=="logfile"))
 		return(c(list(formula=formula, data=data,
-						family=family, 
+						family=family, graphfile=graphfile,
 						lincomb=inlaLincombs, 
 						ldots = list(...)),
 						inlaRes)
 	)
 	
+	inlaRes$graphfile = graphfile
 
 	# posterior distributions of random effect (spatial + independent)
 	Sbym = seq(1, length(adjMat))
@@ -620,10 +617,10 @@ formulaForLincombs = gsub("\\+[[:space:]]+?$|^[[:space:]]?\\+[[:space:]]+", "", 
 		
 		params$propSpatial = list(
 				params.intern = priorCI$propSpatial,
-				priorCI = approx(priorProp[,'cDens'], 
+				priorCI = stats::approx(priorProp[,'cDens'], 
 						priorProp[,'x'], c(0.025, 0.975))$y,
 				posterior = inlaRes$marginals.hyperpar[[imname]],
-				prior = as.data.frame(approx(
+				prior = as.data.frame(stats::approx(
 						priorProp[,'x'], priorProp[,'dens'], phiSeq
 						))
 		)
@@ -651,7 +648,7 @@ formulaForLincombs = gsub("\\+[[:space:]]+?$|^[[:space:]]?\\+[[:space:]]+", "", 
 				userPriorCI=priorCI[[Dname]], 
 				priorCI = 
 						1/sqrt(
-								qgamma(c(0.975,0.025), 
+								stats::qgamma(c(0.975,0.025), 
 										shape=precPrior[[Dname]]["shape"], 
 										rate=precPrior[[Dname]]["rate"])),
 				params.intern=precPrior[[Dname]])
@@ -683,7 +680,7 @@ formulaForLincombs = gsub("\\+[[:space:]]+?$|^[[:space:]]?\\+[[:space:]]+", "", 
 		precSeq = sdSeq^(-2)
 		params[[Dname]]$prior=cbind(
 				x=sdSeq,
-				y=dgamma(precSeq, shape=precPrior[[Dname]]["shape"], 
+				y=stats::dgamma(precSeq, shape=precPrior[[Dname]]["shape"], 
 						rate=precPrior[[Dname]]["rate"]) *2* (precSeq)^(3/2) 
 		)
 		

@@ -1,34 +1,41 @@
-citHeader("To cite diseasemapping in publications use:")
+year <- sub("-.*", "", meta$Date)
+note <- sprintf("R package version %s", meta$Version)
+pb = utils::person(c("Patrick", "E"),"Brown")
+lz = utils::person("L","Zhou")
 
-citEntry(entry = "Article",
-  title        = "Model-Based Geostatistics the Easy Way",
-  author       = personList(as.person("Patrick E. Brown")),
-  journal      = "Journal of Statistical Software",
-  year         = "2015",
-  volume       = "63",
-  number       = "12",
-  pages        = "1--24",
-  url          = "http://www.jstatsoft.org/v63/i12/",
-
-  textVersion  =
-  paste("Patrick E. Brown (2015).",
-        "Model-Based Geostatistics the Easy Way.",
-        "Journal of Statistical Software, 63(12), 1-24.",
-        "URL http://www.jstatsoft.org/v63/i12/.")
-)
-
-citEntry(entry = "Article",
+utils::bibentry(
+  key = 'glmmBUGS',
+	bibtype = "Article",
   title        = "MCMC for Generalized Linear Mixed Models with glmmBUGS",
-  author       = c(person("Patrick E. Brown"),
-  					person("L Zhou")
-  				),
+  author       = c(pb, lz),
   journal      = "R-journal",
   year         = "2010",
   volume       = "2",
-  url          = "http://journal.r-project.org/archive/2010-1/RJournal_2010-1_Brown+Zhou.pdf",
-  textVersion  =
-  paste("Patrick E. Brown and L Zhou (2010).",
-        "MCMC for Generalized Linear Mixed Models with glmmBUGS.",
-        "R-journal, 2.",
-        "URL http://journal.r-project.org/archive/2010-1/RJournal_2010-1_Brown+Zhou.pdf.")
+  url          = "http://journal.r-project.org/archive/2010-1/RJournal_2010-1_Brown+Zhou.pdf"
+)
+
+
+
+utils::bibentry(
+key = 'geostatsp',
+	bibtype = "Article",
+  title="Model-based geostatistics the easy way",
+  author = pb,
+  journal="Journal of Statistical Software",
+  volume="63",
+  number="12",
+  pages="1--24",
+  year="2015",
+  doi = "10.18637/jss.v063.i12"
+)
+
+utils::bibentry(
+	key = 'diseasemappingPackage',
+	bibtype = "Manual",
+         title = 
+         "diseasemapping: Modelling Spatial Variation in Disease Risk for Areal Data",
+         author =c(pb, lz),
+         year = year,
+         note = note,
+         url = "https://CRAN.R-project.org/package=diseasemapping"
 )

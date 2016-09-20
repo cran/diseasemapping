@@ -1,6 +1,7 @@
 ci5zip = 'http://ci5.iarc.fr/CI5plus/old/CI5plus.zip'
 canZip = 'http://www20.statcan.gc.ca/tables-tableaux/cansim/csv/01030550-eng.zip'
 
+#' @export
 cancerRates = function(area = "canada",
    year=2000, sex=c("M", "F"), site="Lung") {
 
@@ -53,7 +54,7 @@ theurl=(paste("http://ci5.iarc.fr/",
 									ignore.case=TRUE)), sep=""))
 theurl = url(theurl)
 forAttribute = scan(theurl, what="a", sep="\t", nmax=1, quiet=TRUE)
-result[[Dsex]]=read.table(theurl, header=TRUE,skip=1, 
+result[[Dsex]]=utils::read.table(theurl, header=TRUE,skip=1, 
 		fill=TRUE, sep="\t", as.is=TRUE)
 }
 

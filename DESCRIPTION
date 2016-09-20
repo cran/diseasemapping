@@ -1,22 +1,24 @@
 Package: diseasemapping
 Type: Package
 Title: Modelling Spatial Variation in Disease Risk for Areal Data
-Version: 1.4.0
-Date: 2016-03-03
-Depends: sp, R (>= 3.2)
-Imports: methods, stats, utils
-Suggests: mgcv, spdep, geostatsp, XML, mapmisc (>= 1.0), knitr
-Enhances: INLA
+Version: 1.4.2
+Date: 2016-09-13
+Depends: R (>= 3.2)
+Imports: stats, utils, sp, methods
+Suggests: spdep, mgcv, geostatsp, mapmisc (>= 1.0), knitr
+Enhances: INLA, XML
 Additional_repositories: https://www.math.ntnu.no/inla/R/stable/
-Author: Patrick Brown <patrick.brown@utoronto.ca>
+Author: Patrick Brown <patrick.brown@utoronto.ca>, Lutong Zhou
 Maintainer: Patrick Brown <patrick.brown@utoronto.ca>
-Description: Formatting of population and case data, calculation of Standardized Incidence Ratios, and fitting the BYM model using INLA.
+Description: Formatting of population and case data, calculation of Standardized
+    Incidence Ratios, and fitting the BYM model using INLA.
 License: GPL
 VignetteBuilder: knitr
+RoxygenNote: 5.0.1
 Repository: CRAN
 Repository/R-Forge/Project: diseasemapping
-Repository/R-Forge/Revision: 1338
-Repository/R-Forge/DateTimeStamp: 2016-03-06 03:34:57
-Date/Publication: 2016-03-07 23:22:38
+Repository/R-Forge/Revision: 1528
+Repository/R-Forge/DateTimeStamp: 2016-09-20 01:51:51
+Date/Publication: 2016-09-20 13:52:19
 NeedsCompilation: no
-Packaged: 2016-03-06 04:35:26 UTC; rforge
+Packaged: 2016-09-20 09:25:43 UTC; rforge

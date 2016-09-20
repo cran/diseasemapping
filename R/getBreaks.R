@@ -1,3 +1,4 @@
+#' @export
 getBreaks <- function (colNames, breaks=NULL) 
 {
     popColumns <- grep(

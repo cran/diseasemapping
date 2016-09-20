@@ -1,3 +1,4 @@
+#' @export
 `formatCases` <- function(casedata, ageBreaks=NULL, years=NULL, aggregate.by=NULL) {
 
 if(class(casedata)!="data.frame")
@@ -80,7 +81,7 @@ if(!length(casecol)) {
 # aggregate, if necessary
 if(!is.null(aggregate.by) & length(aggregate.by)) {
 	
-   popa = aggregate(casedata$cases, casedata[, aggregate.by, drop=FALSE], sum)
+   popa = stats::aggregate(casedata$cases, casedata[, aggregate.by, drop=FALSE], sum)
    names(popa)[names(popa)=="x"] = casecol
    casedata <- popa
 }

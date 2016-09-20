@@ -3,11 +3,13 @@
 
 \documentclass[12pt]{article}
 \usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
 \usepackage{caption}
 \usepackage{subcaption}
 \providecommand{\subfloat}[2][need a sub-caption]{\subcaptionbox{#1}{#2}}
 \title{BYM with PC priors}
 \author{Patrick Brown}
+\date{April 2016}
 
 \begin{document}
 
@@ -20,7 +22,6 @@ opts_chunk$set(out.width='0.48\\textwidth', fig.align='default', fig.height=3, f
 
 <<packages>>=
 require('diseasemapping')
-require("methods")
 data('kentucky')
 @
 
@@ -50,12 +51,38 @@ if(FALSE) {
 # get rid of under 10's
 larynxRates = larynxRates[grep("_(0|5)$",names(larynxRates), invert=TRUE)]
 # compute Sexpected
-kentucky = getSMR(kentucky, larynxRates, larynx,
-		regionCode="County")
+kentucky = diseasemapping::getSMR(kentucky, larynxRates, larynx, regionCode="County")
 @
 
 
-\section*{BYM with gamma priors on precision}
+
+\section*{The BYM model}
+
+The Besag, York and Mollie model for Poisson distributed case counts is:
+
+\begin{align*}
+Y_i \sim & \text{Poisson}(O_i \lambda_i)\\
+\log(\mu_i) = &X_i \beta + U_i\\
+U_i \sim & \text{BYM}(\sigma_1^2 , \sigma_2^2)\\
+\end{align*}
+
+\begin{itemize}
+\item $Y_i$ is the response variable for region $i$
+\item $O_i$ is the 'baseline' expected count, which is specified 
+\item  $X_i$ are covariates
+\item $U_i$ is a spatial random effect with a spatially structured variance parameter $\sigma_1^2$
+and a spatially independent variance $\sigma_2^2$
+\end{itemize}
+
+
+
+
+
+
+\section*{Gamma priors on precision}
+
+
+
 
 <<bymGamma, tidy=TRUE>>=
 kBYM = bym(
@@ -65,6 +92,13 @@ kBYM = bym(
 		region.id="County"
 )
 @
+
+Above, Gamma priors are assigned to 
+$1/\sigma_1^2$ and $1/\sigma_2^2$, with the shape and scale parameters 
+set to produce 
+2.5\% to 97.5\% prior intervals of $(0.1, 5)$ for each standard deviation
+parameter.
+
 
 
 
@@ -89,15 +123,23 @@ plot(kBYM$parameters$sdIndep$posterior, type='l',
 lines(kBYM$parameters$sdIndep$prior, col='blue')
 legend('topright', lty=1, col=c('black','blue'), legend=c('posterior','prior'))
 } else {
-	plot(1:10)
-	plot(1:10)
+	plot(1:10, type='n')
+	text(5,5,'inla is not installed')
+	plot(1:10, type='n')
+	text(5,5,'inla is not installed')
 }
 @
 
 
+
+
 \section*{BYM with penalised complexity prior}
 
-$pr(sd > 1) = 0.05$ and $pr(phi < 0.2) = 0.95$
+
+
+
+
+
 
 <<bymPc, tidy=TRUE>>=
 kBYMpc = try(
@@ -107,11 +149,16 @@ bym(
 		priorCI = list(sd=c(1, 0.05), propSpatial=c(0.2, 0.95))),
 silent=TRUE
 )
+@
+
+<<bymPcTry, include=FALSE>>=
 if(class(kBYMpc) == 'try-error') 
 	kBYMpc = list()
 @
 
 
+Here penalized complexity priors are used with
+$pr(\sqrt{\sigma_1^2+\sigma_2^2} > 1) = 0.05$ and $pr(\sigma_1/\sigma_0 < 0.2) = 0.95$.
 
 <<summaryPc>>=
 if(!is.null(kBYMpc$parameters))
@@ -134,8 +181,10 @@ plot(kBYMpc$parameters$propSpatial$posterior, type='l',
 lines(kBYMpc$parameters$propSpatial$prior, col='blue')
 legend('topright', lty=1, col=c('black','blue'), legend=c('posterior','prior'))
 } else {
-	plot(1:10)
-	plot(1:10)
+	plot(1:10, type='n')
+	text(5,5,'inla is not installed')
+	plot(1:10, type='n')
+	text(5,5,'inla is not installed')
 }
 @
 
@@ -180,11 +229,14 @@ legendBreaks('topleft', colRpc, cex=thecex)
 
 
 } else {
-	plot(1:10)
-	plot(1:10)
-	plot(1:10)
-	plot(1:10)
-	
+	plot(1:10, type='n')
+	text(5,5,'inla is not installed')
+	plot(1:10, type='n')
+	text(5,5,'inla is not installed')
+	plot(1:10, type='n')
+	text(5,5,'inla is not installed')
+	plot(1:10, type='n')
+	text(5,5,'inla is not installed')
 }
 @
 

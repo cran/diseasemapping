@@ -7,7 +7,7 @@
 a glm model with Poisson distribution by default.
 }
 \usage{
-getRates(casedata, popdata, formula, family = poisson, minimumAge = 0, 
+getRates(casedata, popdata, formula, family = 'poisson', minimumAge = 0, 
     maximumAge = 100, S = c("M", "F"), years = NULL, year.range = NULL, 
     case.years = grep("^year$", names(casedata), ignore.case = TRUE, 
         value = TRUE), fit.numeric=NULL, breaks = NULL) 

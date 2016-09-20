@@ -90,7 +90,8 @@ for (D in 3:12) {
 }
 
 
-kentucky4 = getSMR(list(
+kentucky4 = getSMR(
+		popdata=list(
         '5'=kentucky, '10'=kentucky
     ),
     model=modelList

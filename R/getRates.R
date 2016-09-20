@@ -1,15 +1,16 @@
 #years: a vector of census years, default will use the names of popdata list
 #year.range: A two-element numerical vector indicting the starting and ending year of study period, default set to range of casedata
 #case.years: the variable name that stores the year variable of case file
+#' @export
 `getRates` <-
-function(casedata, popdata, formula, family=poisson, minimumAge=0,
+function(casedata, popdata, formula, family='poisson', minimumAge=0,
    maximumAge=100, S=c("M", "F"), years=NULL, year.range=NULL,
    case.years=grep("^year$", names(casedata), ignore.case=TRUE, value=TRUE),
    fit.numeric=NULL ,breaks=NULL){
  
 # check the formula is one sided
   
-if(attributes(terms(formula))$response)
+if(attributes(stats::terms(formula))$response)
   warning("formula should be one sided")
 
 morethanoneyear = class(popdata)=="list"
@@ -19,7 +20,7 @@ useGam <- length(grep("s\\(",formula))>0
 if(useGam & requireNamespace("mgcv", quietly = TRUE)) {
   modelFittingFunction = mgcv::gam
 } else {
-  modelFittingFunction = glm
+  modelFittingFunction = stats::glm
 }
 
 #is SP or not
@@ -35,7 +36,8 @@ if(is.null(years) & morethanoneyear ){
 }
 
 #factors we need to aggregate by
-theterms=gsub("^s\\(|,([[:alnum:]]|=|[[:space:]]|,|\\$|\\[|\\])+\\)$|\\)$", "", rownames(attributes(terms(formula))$factors))
+theterms=gsub("^s\\(|,([[:alnum:]]|=|[[:space:]]|,|\\$|\\[|\\])+\\)$|\\)$", "", 
+		rownames(attributes(stats::terms(formula))$factors))
 
 pops <- formatPopulation(popdata, aggregate.by= theterms, 
 		breaks=breaks, personYears=FALSE,S=S)
@@ -174,8 +176,8 @@ if(!is.null(fit.numeric)){
 #if(length(S)==1) formula=update.formula(formula, todel)
 
 # add cases and logpop to formula
-formula1 = update.formula(formula, 
-		as.formula(paste(casecol," ~ offset(logpop) + ."))
+formula1 = stats::update.formula(formula, 
+		stats::as.formula(paste(casecol," ~ offset(logpop) + ."))
 )
 #return(newdata, formula1)
 

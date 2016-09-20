@@ -2,15 +2,15 @@
 \docType{methods}
 \alias{getSMR}
 \alias{getSMR-methods}
-\alias{getSMR,data.frame,numeric,missing,ANY,ANY-method}
-\alias{getSMR,data.frame,glm,missing,ANY,ANY-method}
+\alias{getSMR,SpatialPolygonsDataFrame,ANY,ANY,ANY,ANY-method}
+\alias{getSMR,list,ANY,ANY,ANY,ANY-method}
+\alias{getSMR,data.frame,ANY,missing,missing,missing-method}
+
 \alias{getSMR,data.frame,ANY,data.frame,missing,missing-method}
 \alias{getSMR,data.frame,ANY,data.frame,character,missing-method}
+\alias{getSMR,data.frame,ANY,missing,character,missing-method}
+
 \alias{getSMR,data.frame,ANY,data.frame,character,character-method}
-\alias{getSMR,SpatialPolygonsDataFrame,ANY,ANY,ANY,ANY-method}
-\alias{getSMR,data.frame,list,missing,ANY,ANY-method}
-\alias{getSMR,list,list,missing,ANY,ANY-method}
-\alias{getSMR,list,ANY,data.frame,ANY,ANY-method}
 
 
 \title{Calculate the standardized mortality/morbidity ratios}
@@ -20,14 +20,19 @@ It will also merge back the observed value, expected value and the ratio back to
 }
 
 \usage{
-\S4method{getSMR}{data.frame,numeric,missing,ANY,ANY}(
+\S4method{getSMR}{SpatialPolygonsDataFrame,ANY,ANY,ANY,ANY}(
 popdata, model, casedata, regionCode , regionCodeCases , 
 area.scale = 1,  sex=c('m','f'),...
 )
-\S4method{getSMR}{data.frame,glm,missing,ANY,ANY}(
+\S4method{getSMR}{list,ANY,ANY,ANY,ANY}(
+popdata, model, casedata, regionCode , regionCodeCases , 
+area.scale=1, sex=c('m','f'), ...
+)
+\S4method{getSMR}{data.frame,ANY,missing,missing,missing}(
 popdata, model, casedata, regionCode , regionCodeCases , 
 area.scale = 1,  sex=c('m','f'),...
 )
+
 \S4method{getSMR}{data.frame,ANY,data.frame,missing,missing}(
 popdata, model, casedata, regionCode , regionCodeCases , 
 area.scale = 1,  sex=c('m','f'),...
@@ -36,26 +41,14 @@ area.scale = 1,  sex=c('m','f'),...
 popdata, model, casedata, regionCode , regionCodeCases , 
 area.scale = 1,  sex=c('m','f'),...
 )
+\S4method{getSMR}{data.frame,ANY,missing,character,missing}(
+popdata, model, casedata, regionCode , regionCodeCases , 
+area.scale = 1,  sex=c('m','f'),...
+)
+
 \S4method{getSMR}{data.frame,ANY,data.frame,character,character}(
 popdata, model, casedata, regionCode , regionCodeCases , 
 area.scale = 1,  sex=c('m','f'),...
-)
-\S4method{getSMR}{data.frame,list,missing,ANY,ANY}(
-popdata, model, casedata, regionCode , regionCodeCases , 
-area.scale = 1,  sex=c('m','f'),...
-)
-\S4method{getSMR}{list,list,missing,ANY,ANY}(
-popdata, model, casedata, regionCode , regionCodeCases , 
-area.scale = 1,  sex=c('m','f'),...
-)
-\S4method{getSMR}{SpatialPolygonsDataFrame,ANY,ANY,ANY,ANY}(
-popdata, model, casedata, regionCode , regionCodeCases , 
-area.scale = 1,  sex=c('m','f'),...
-)
-\S4method{getSMR}{list,ANY,data.frame,ANY,ANY}(
-popdata, model, casedata, regionCode , regionCodeCases , 
-area.scale=1,   years = NULL, 
-personYears=TRUE,year.range = NULL,...
 )
 
 }
@@ -68,10 +61,12 @@ personYears=TRUE,year.range = NULL,...
   \item{area.scale}{ scale the unit of area. e.g $10^6$: if your spatial coordinates are metres 
   and you want intensity in cases per km2 }
   \item{sex}{possible subsetting of cases and population, set \code{sex='f'} for females only.}
-  \item{personYears}{convert populations to person-years}
-  \item{years}{a vector with the year of each dataset}
-  \item{year.range}{two dimensional vector with first and last year}
- \item{\dots}{ additional arguments}
+ \item{\dots}{ additional arguments.   When \code{popdata} is a \code{list}, arguments 
+ can be 
+  \code{personYears} (logical, convert rates to person years), 
+  \code{years} (a vector with the year of each dataset), or
+  \code{year.range} (two dimensional vector with first and last year)
+ }
 }
 \details{
 If \code{model} is numeric, it's assumed to be a vector of rates, with the names of the elements corresponding to columns of the population data set.  Names do not need to match exactly (can have M in one set of names, male in another for instance).

@@ -1,5 +1,6 @@
 \name{kentucky}
 \alias{kentucky}
+\alias{kentuckyTract}
 \alias{larynx}
 \alias{larynxRates}
 \docType{data}
@@ -7,14 +8,21 @@
 \description{
  Data set contains the information of population, by age, sex, and census subdivision.
 }
-\usage{data(kentucky)}
-\format{A SpatialPolygonsDataFrame of Kentucky county boundaries and populations, a data frame 
-of case numbers for each county, and a vector of cancer rates by age and sex group.
+\usage{data('kentucky')}
+\format{A \code{SpatialPolygonsDataFrame} of Kentucky boundaries and populations, 
+ case numbers for each county, and a vector of cancer rates by age and sex group.
 
 }
 \details{
-The cancer case data are obtained from www.cancer-rates.info and are for a single  
+
+\code{larynx} is a \code{data.frame} of cancer case counts by county, 
+obtained from \url{http://www.cancer-rates.info} and are for a single  
 deliberately unspecified year. 
+
+\code{kentucky} contains country boundaries and populations.
+
+\code{kentuckyTract} contains census tract boundaries and populations.
+
 }
 
 
@@ -30,6 +38,10 @@ kentucky2 = getSMR(kentucky, larynxRates, larynx,
 		regionCode="County")
 
 names(kentucky2)
+length(kentucky2)
+
+data('kentuckyTract')
+length(kentuckyTract)
 
 if(require('mapmisc', quietly=TRUE)) {
 	mycol = colourScale(kentucky2$SMR, 
