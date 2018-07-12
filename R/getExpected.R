@@ -89,6 +89,28 @@ setMethod("getExpected",
 				area.scale=1, 
 				sex=c('m','f')){
 			
+			
+			allVars= gsub("offset[(]|[)]$", "", rownames(attributes(model$terms)$factors)[-1])
+			if(all(allVars %in% colnames(popdata))) {
+				
+				# data doesn't need formatting
+				theFactors = attributes(model$terms)$dataClasses
+				theFactors = names(theFactors[theFactors == 'factor'])
+				# get rid of levels 
+				for(D in theFactors) {
+					popdata = popdata[as.character(popdata[,D]) %in% 
+									levels(model$data[,D]), ]
+				}
+				popdata$expected = predict(model, popdata, type='response')
+				if(length(model$aggregate))
+					popdata = stats::aggregate(
+							popdata[,'expected', drop=FALSE],
+							popdata[,model$aggregate, drop=FALSE],
+							sum, na.rm=TRUE)
+				
+				return(popdata)
+			}
+			
 			popdata$idForAgg = 1:nrow(popdata)
 			poplong <- formatPopulation(popdata, breaks=attributes(model)$breaks$breaks)
 			

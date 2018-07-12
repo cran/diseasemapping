@@ -10,8 +10,14 @@ function(casedata, popdata, formula, family='poisson', minimumAge=0,
  
 # check the formula is one sided
   
-if(attributes(stats::terms(formula))$response)
-  warning("formula should be one sided")
+if(attributes(stats::terms(formula))$response) {
+	casecol = rownames(attributes(stats::terms(formula))$factors)[
+			attributes(stats::terms(formula))$response
+			]
+} else {
+	casecol = NULL
+}
+attributes(casedata)$casecol = casecol
 
 morethanoneyear = class(popdata)=="list"
 
@@ -36,11 +42,29 @@ if(is.null(years) & morethanoneyear ){
 }
 
 #factors we need to aggregate by
-theterms=gsub("^s\\(|,([[:alnum:]]|=|[[:space:]]|,|\\$|\\[|\\])+\\)$|\\)$", "", 
-		rownames(attributes(stats::terms(formula))$factors))
+theterms=setdiff(gsub("^s\\(|,([[:alnum:]]|=|[[:space:]]|,|\\$|\\[|\\])+\\)$|\\)$", "", 
+		rownames(attributes(stats::terms(formula))$factors)), casecol)
 
-pops <- formatPopulation(popdata, aggregate.by= theterms, 
-		breaks=breaks, personYears=FALSE,S=S)
+if(all(c('population',theterms) %in% colnames(popdata))) {
+	# data is already long
+	pops = stats::aggregate(
+			popdata[,'population',drop=FALSE],
+			popdata[,theterms],
+			sum,
+			na.rm=TRUE
+			)
+	theBreaks = sort(unique(pops$age))
+	pops$age = cut(pops$age, theBreaks, right=FALSE)
+	attributes(pops)$breaks = list(
+			breaks = theBreaks,
+			sex = unique(pops$sex)
+			)
+			
+} else {
+	pops <- formatPopulation(popdata, aggregate.by= theterms, 
+			breaks=breaks, personYears=FALSE,S=S)
+}
+
 
 ##format case data
 #casedata = formatCases(casedata, ageBreaks=attributes(pops)$breaks, aggregate.by = theterms)
@@ -59,8 +83,6 @@ if(length(S)==1) {
   casedata=casedata[casedata[[
     grep("^sex$", names(casedata), value=TRUE, ignore.case=TRUE)
       ]]==S,]
-      
-
 }
 
 #format case data
@@ -106,7 +128,8 @@ if(length(termsToAdd) ) {
 
 } # end if termsToAdd
  
-casedata = formatCases(casedata, ageBreaks=attributes(pops)$breaks, 
+casedata = formatCases(casedata, 
+		ageBreaks=attributes(pops)$breaks, 
   aggregate.by = theterms)
 
 casecol = attributes(casedata)$casecol
@@ -140,10 +163,10 @@ newdata$POPULATION = newdata$POPULATION  * newdata$yearsForCensus
 newdata$YEAR= factor(newdata$YEAR, levels = unique(newdata$YEAR))
 } # end more than one year
 
-
-newdata = newdata[!is.na(newdata$POPULATION),]
-newdata = newdata[newdata$POPULATION>0,]
-newdata$logpop = log(newdata$POPULATION)
+popCol = grep("^population$", colnames(newdata), ignore.case=TRUE, value=TRUE)
+newdata = newdata[!is.na(newdata[,popCol]), ]
+newdata = newdata[newdata[,popCol]>0,]
+newdata$logpop = log(newdata[,popCol])
 
 newdata[is.na(newdata[,casecol]),casecol] <-0
 	

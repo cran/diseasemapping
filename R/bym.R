@@ -579,9 +579,9 @@ formulaForLincombs = gsub("\\+[[:space:]]+?$|^[[:space:]]?\\+[[:space:]]+", "", 
 								inlaRes$all.hyper$random[[Deffect]]$hyper$theta2$prior),
 						quiet=TRUE), 
 				ncol=2, dimnames = list(NULL, c( "xTrans","logDensTrans")))
-		priorProp = cbind(priorProp, logX = exp(priorProp[,'xTrans']))
+		priorProp = cbind(priorProp, orX = exp(priorProp[,'xTrans']))
 		priorProp = cbind(priorProp, 
-				x = priorProp[,'logX']/ (1+priorProp[,'logX'])
+				x = priorProp[,'orX']/ (1+priorProp[,'orX'])
 		)
 		
 		# what the prior integrates to	
@@ -593,10 +593,11 @@ formulaForLincombs = gsub("\\+[[:space:]]+?$|^[[:space:]]?\\+[[:space:]]+", "", 
 	diffTrans = c(NA, diff(priorProp[,'xTrans']))
 	diffX = c(NA, diff(priorProp[,'x']))
 	
+ # jacobian is p*(1-p)
 		priorProp = cbind(priorProp, 
-				logDens = priorProp[,'logDensTrans'] +
-						log(abs(diffTrans)) - 
-						log(abs(diffX)) - log(const)
+				logDens = priorProp[,'logDensTrans'] - log(priorProp[,'x']) - log(1-priorProp[,'x'])
+#						log(abs(diffTrans)) - 
+#						log(abs(diffX)) - log(const)
 		)
 		priorProp[1, 'logDens'] = priorProp[2, 'logDens']
 

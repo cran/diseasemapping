@@ -46,7 +46,16 @@ If not supplied, row numbers will be used.}
 \item{formula.fitted}{formula to use to compute the fitted values, defaults to the model 
 formula but may, for example, exclude individual-level covariates.}
   \item{\dots}{
-Additional arguments passed to  \code{\link[INLA]{inla}}, such as \code{\link[INLA]{control.inla}}. 
+Additional arguments passed to  
+\Sexpr[results=rd]{c(
+  '\\\\code{inla} in the \\\\code{INLA} package', 
+  '\\\\code{\\\\link[INLA]{inla}}'
+  )[1+requireNamespace('INLA', quietly=TRUE)]
+  }, such as 
+\Sexpr[results=rd]{c(
+  '\\\\code{control.inla}', 
+  '\\\\code{\\\\link[INLA]{control.inla}}'
+  )[1+requireNamespace('INLA', quietly=TRUE)]}
 }
 }
 
@@ -66,6 +75,7 @@ in \code{formula} on the log scale with \eqn{\log(O_i)}{log(O_i)} an \code{offse
 \item{\eqn{U_i} is a spatial random effect, with a spatially structured variance parameter \eqn{\sigma_1^2}
 and a spatially independent variance \eqn{\sigma_2^2}.}
 }
+
 The \code{priorCI} argument can be 
 a \code{list} containing elements named \code{sdSpatial} and \code{sdIndep}, each being a vector of length 2 with 
 2.5pct and 97.5pct quantiles for the prior distributions of the standard deviations
@@ -73,7 +83,12 @@ a \code{list} containing elements named \code{sdSpatial} and \code{sdIndep}, eac
 Gamma prior distributions for the precision parameters 
 \eqn{1/\sigma_1^2} and \eqn{1/\sigma_2^2}
 yielding quantiles specified
-for the standard deviations are computed, and used with the \code{model="bym"} option to \code{\link[INLA]{f}}.  
+for the standard deviations are computed, and used with the \code{model="bym"} option to 
+\Sexpr[results=rd]{c(
+  '\\\\code{f}', 
+  '\\\\code{\\\\link[INLA]{f}}'
+  )[1+requireNamespace('INLA', quietly=TRUE)]
+  }.  
 
 The other possible format for \code{priorCI} is to have elements named \code{sd} and \code{propSpatial}, which 
 specifies \code{model="bym2"} should be used with penalized complexity priors.  
@@ -88,7 +103,11 @@ This prior is approximately exponential, and \code{priorCI$sd = c(1, 0.01)} spec
  
 \value{
 A list containing
-\item{inla}{results from the call to \code{\link[INLA]{inla}}.  
+\item{inla}{results from the call to 
+\Sexpr[results=rd]{c(
+  '\\\\code{inla}', 
+  '\\\\code{\\\\link[INLA]{inla}}'
+  )[1+requireNamespace('INLA', quietly=TRUE)]}.  
 Two additional elements are added: \code{marginals.bym} for the marginal distributions of the spatial random
 effects, and \code{marginals.fitted.bym} for the marginals of the fitted values.  }
 \item{data}{A \code{data.frame} or \code{SpatialPolygonsDataFrame} containing posterior means
@@ -104,7 +123,13 @@ Patrick Brown
 
 
 \seealso{
-\url{http://r-inla.org}, \code{\link[INLA]{inla}}, \code{\link[geostatsp]{glgm}}, \code{\link[diseasemapping]{getSMR}} 
+\url{http://r-inla.org}, 
+\Sexpr[results=rd]{c(
+  '\\\\code{inla}', 
+  '\\\\code{\\\\link[INLA]{inla}}'
+  )[1+requireNamespace('INLA', quietly=TRUE)]
+  }
+\code{\link[geostatsp]{glgm}}, \code{\link[diseasemapping]{getSMR}} 
 }
 
 \examples{
@@ -145,7 +170,10 @@ kBYM = bym(observed ~ offset(logExpected) + poverty, kentucky,
 		kBYM$data$exc1 = geostatsp::excProb(
 			kBYM$inla$marginals.fitted.bym, log(1.2)
 			)
+}  else {
+	kBYM = list()
 }
+
 
 
 

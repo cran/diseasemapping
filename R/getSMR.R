@@ -147,26 +147,35 @@ setMethod("getSMR",
 		){
 # have case data, compute SMR
 
-			popdata = methods::callGeneric(
+      popdata = methods::callGeneric(
 					popdata, model,
 					area.scale=area.scale,	sex=sex,
 					...
 			)
-			
-			casecol = grep("^cases$|^count$|^y$", names(casedata), value=TRUE, ignore.case=TRUE)
-			if(length(casecol)>1) {
+
+   if(class(model)=='formula') {
+			casecol = rownames(attributes(model$terms)$factors)[
+					attributes(stats::terms(model$formula))$response
+			]
+ } else {
+   casecol = grep("^cases$|^count$|^y$", names(casedata), value=TRUE, ignore.case=TRUE)
+ }
+
+ if(! identical(casecol %in% colnames(casedata), TRUE))
+				casecol = grep("^cases$|^count$|^y$", names(casedata), value=TRUE, ignore.case=TRUE)
+	
+  if(length(casecol)>1) {
 				casecol=casecol[1]
 				warning("more than one column which could be interpreted as case numbers, using ", casecol)
 			}
-			
-			if(!length(casecol)) {
+		
+   if(!length(casecol)) {
 				#there is no case col
 				casecol = "cases"
-				casedata[,casecol] = 1
+				casedata[[casecol]] = 1
 			}
 			
-			
-			casedata = casedata[
+   casedata = casedata[
 					as.character(casedata[, regionCodeCases]) %in% 
 							as.character(popdata[[regionCode]]), ]
 			
@@ -184,8 +193,8 @@ setMethod("getSMR",
 			# change 0's in expected to NA, so SMR is NA
 			theexpected = popdata$expected
 			theexpected[theexpected==0] = NA
-			
-			popdata$SMR <- popdata$observed/theexpected
+
+   popdata$SMR <- popdata$observed/theexpected
 			
 			popdata
 		}
@@ -196,9 +205,9 @@ setMethod("getSMR",
 		function(popdata, model, casedata, regionCode,
 				regionCodeCases, area.scale=1,
 				sex=c('m','f'), ...){  
-			
+
 			# years = NULL, personYears=TRUE,year.range = NULL,...){
-			
+			#dots = list()
 			dots = list(...)
 			
 			if (is.null(dots$years)) {
@@ -208,8 +217,10 @@ setMethod("getSMR",
 			
 			yearVar="YEAR"
 			if(!is.vector(model) & class(model)[1]!='list' ) {
-				yearVar = grep("year", names(attributes((stats::terms(model)))$dataClasses) ,
+				yearVarModel = grep("year", 
+						names(attributes((stats::terms(model)))$dataClasses) ,
 						value=TRUE,ignore.case=TRUE)  # find year var in the model
+				if(length(yearVarModel)) yearVar = yearVarModel
 				if (length(model$sexSubset) == 1) {
 					message("only one sex is being used:",model$sexSubset)
 					sex = model$sexSubset
@@ -252,22 +263,34 @@ setMethod("getSMR",
 			popdataOrig = popdata
 			if(!missing(casedata)) {
 				casedataOrig = casedata
+				useCaseData = TRUE
+				# create a case data frame with zero cases for 
+	# years where no cases are present
+				casedataWhenNocases = casedataOrig[,
+						grep("^cases$|^count$|^y$", names(casedataOrig), 
+								invert=TRUE, ignore.case=TRUE)]
+				casedataWhenNocases$cases = 0
+			} else {
+#				casedataOrig = NULL
+				useCaseData = FALSE
 			}
 			
+			
+			
 			for(Dyear in names(popdataOrig)) {
-				
+
 				popdata = popdataOrig[[Dyear]]
-				
-				if(!missing(casedata)) {
+
+				if(useCaseData) {
 					casedata = casedataOrig[casedataOrig[[caseYearVar]]==Dyear,]
 					
 					if (length(sex) == 1) {      
 						casedata = casedata[casedata[[caseSexVar]] %in% sex, ]
 					}
-					if(dim(casedata)[1]==0) casedata<-NULL   
-				} else { # casedata is missing
-					caseThisYear = NULL
-				}
+					if(dim(casedata)[1]==0) casedata <- casedataWhenNocases
+				} #else { # casedata is missing
+					#casedata = casedataWhenNocases
+				#}
 				
 				# Compute area if spdf not in long-lat
 				if(length(grep("Spatial*DataFrame", class(popdata)))) {
@@ -282,9 +305,7 @@ setMethod("getSMR",
 					
 				popdata[[yearVar]] = as.integer(Dyear)
 				
-				
 				result[[Dyear]] = methods::callGeneric()
-				
 			}
 			names(result) = years
 			

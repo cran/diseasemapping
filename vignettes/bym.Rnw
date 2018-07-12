@@ -18,6 +18,17 @@
 <<knitr, include=FALSE>>=
 require('knitr')
 opts_chunk$set(out.width='0.48\\textwidth', fig.align='default', fig.height=3, fig.width=6)
+if(Sys.info()['sysname'] =='Linux' &
+  requireNamespace("INLA")) {   
+  INLA::inla.setOption(inla.call = 
+      system.file(paste(
+          "bin/linux/",          
+          ifelse(
+            .Machine$sizeof.pointer == 4, 
+            "32", "64"),
+          'bit/inla.static', sep=''),
+        package="INLA")) 
+}
 @    
 
 <<packages>>=
@@ -51,7 +62,11 @@ if(FALSE) {
 # get rid of under 10's
 larynxRates = larynxRates[grep("_(0|5)$",names(larynxRates), invert=TRUE)]
 # compute Sexpected
-kentucky = diseasemapping::getSMR(kentucky, larynxRates, larynx, regionCode="County")
+kentucky = diseasemapping::getSMR(
+    popdata=kentucky, 
+    model = larynxRates, 
+    casedata=larynx, 
+    regionCode="County")
 @
 
 
@@ -85,12 +100,18 @@ and a spatially independent variance $\sigma_2^2$
 
 
 <<bymGamma, tidy=TRUE>>=
-kBYM = bym(
+kBYM = kBYMpc = try(bym(
 		formula = observed ~ offset(logExpected) + poverty,
     data=kentucky,
     priorCI = list(sdSpatial=c(0.1, 5), sdIndep=c(0.1, 5)),
 		region.id="County"
-)
+))
+@
+
+
+<<bymTry, include=FALSE>>=
+if(class(kBYM) == 'try-error') 
+	kBYM = list()
 @
 
 Above, Gamma priors are assigned to 
@@ -136,19 +157,15 @@ legend('topright', lty=1, col=c('black','blue'), legend=c('posterior','prior'))
 \section*{BYM with penalised complexity prior}
 
 
-
-
-
-
-
 <<bymPc, tidy=TRUE>>=
 kBYMpc = try(
 bym(
-		formula = observed ~ offset(logExpected) + poverty,
+	formula = observed ~ offset(logExpected) + poverty,
     kentucky,
-		priorCI = list(sd=c(1, 0.05), propSpatial=c(0.2, 0.95))),
-silent=TRUE
-)
+	priorCI = list(
+      sd=c(1, 0.05), 
+      propSpatial = c(0.9, 0.5)),
+  verbose=TRUE), silent=TRUE)
 @
 
 <<bymPcTry, include=FALSE>>=
@@ -176,8 +193,9 @@ plot(kBYMpc$parameters$sd$posterior, type='l',
 lines(kBYMpc$parameters$sd$prior, col='blue')
 legend('topright', lty=1, col=c('black','blue'), legend=c('posterior','prior'))
 
-plot(kBYMpc$parameters$propSpatial$posterior, type='l', 
-		xlim=c(0,0.2))
+plot(kBYMpc$parameters$propSpatial$posterior, 
+  type='l', 
+		xlim=c(0, 1))
 lines(kBYMpc$parameters$propSpatial$prior, col='blue')
 legend('topright', lty=1, col=c('black','blue'), legend=c('posterior','prior'))
 } else {

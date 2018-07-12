@@ -65,7 +65,8 @@ if(!is.null(ageBreaks)){
 
 
 # find column with cases
-casecol = grep("^cases$|^count$|^y$", names(casedata), value=TRUE, ignore.case=TRUE)
+casecol = attributes(casedata)$casecol
+if(!length(casecol)) casecol = grep("^cases$|^count$|^y$", names(casedata), value=TRUE, ignore.case=TRUE)
 if(length(casecol)>1) {
 	casecol=casecol[1]
 	warning("more than one column which could be interpreted as case numbers, using ", casecol)
@@ -80,9 +81,9 @@ if(!length(casecol)) {
 
 # aggregate, if necessary
 if(!is.null(aggregate.by) & length(aggregate.by)) {
-	
-   popa = stats::aggregate(casedata$cases, casedata[, aggregate.by, drop=FALSE], sum)
-   names(popa)[names(popa)=="x"] = casecol
+   popa = stats::aggregate(
+		   casedata[,casecol,drop=FALSE], 
+		   casedata[, aggregate.by, drop=FALSE], sum)
    casedata <- popa
 }
 

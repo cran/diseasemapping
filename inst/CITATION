@@ -11,7 +11,7 @@ utils::bibentry(
   journal      = "R-journal",
   year         = "2010",
   volume       = "2",
-  url          = "http://journal.r-project.org/archive/2010-1/RJournal_2010-1_Brown+Zhou.pdf"
+  url          = "https://journal.r-project.org/archive/2010-1/RJournal_2010-1_Brown+Zhou.pdf"
 )
 
 
