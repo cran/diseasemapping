@@ -1,8 +1,8 @@
 Package: diseasemapping
 Type: Package
 Title: Modelling Spatial Variation in Disease Risk for Areal Data
-Version: 1.4.6
-Date: 2018-07-11
+Version: 1.4.9
+Date: 2020-05-04
 Depends: R (>= 3.2)
 Imports: stats, utils, sp, methods
 Suggests: spdep, mgcv, geostatsp, mapmisc (>= 1.0), knitr
@@ -17,8 +17,8 @@ VignetteBuilder: knitr
 RoxygenNote: 5.0.1
 Repository: CRAN
 Repository/R-Forge/Project: diseasemapping
-Repository/R-Forge/Revision: 2001
-Repository/R-Forge/DateTimeStamp: 2018-07-11 19:59:27
-Date/Publication: 2018-07-12 14:00:11 UTC
+Repository/R-Forge/Revision: 2406
+Repository/R-Forge/DateTimeStamp: 2020-05-05 03:20:56
+Date/Publication: 2020-05-05 13:40:13 UTC
 NeedsCompilation: no
-Packaged: 2018-07-11 20:10:22 UTC; rforge
+Packaged: 2020-05-05 03:41:45 UTC; rforge

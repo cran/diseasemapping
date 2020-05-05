@@ -1,21 +1,4 @@
-%\VignetteEngine{knitr::knitr}
-%\VignetteIndexEntry{BYM with PC priors}
-
-\documentclass[12pt]{article}
-\usepackage[margin=1in]{geometry}
-\usepackage{amsmath}
-\usepackage{caption}
-\usepackage{subcaption}
-\providecommand{\subfloat}[2][need a sub-caption]{\subcaptionbox{#1}{#2}}
-\title{BYM with PC priors}
-\author{Patrick Brown}
-\date{April 2016}
-
-\begin{document}
-
-\maketitle
-
-<<knitr, include=FALSE>>=
+## ----knitr, include=FALSE-----------------------------------------------------
 require('knitr')
 opts_chunk$set(out.width='0.48\\textwidth', fig.align='default', fig.height=3, fig.width=6)
 if(Sys.info()['sysname'] =='Linux' &
@@ -29,16 +12,12 @@ if(Sys.info()['sysname'] =='Linux' &
           'bit/inla.static', sep=''),
         package="INLA")) 
 }
-@    
 
-<<packages>>=
+## ----packages-----------------------------------------------------------------
 require('diseasemapping')
 data('kentucky')
-@
 
-\section*{Incidence rates}
-
-<<rates, tidy=TRUE>>=
+## ----rates, tidy=TRUE---------------------------------------------------------
 if(FALSE) {
 	# must have an internet connection to do the following
 	larynxRates= cancerRates("USA", year=1998:2002,site="Larynx")
@@ -54,11 +33,8 @@ if(FALSE) {
 					"F_55", "F_60", "F_65", "F_70", "F_75", "F_80", "F_85"))
 	
 }
-@
 
-
-
-<<smr>>=
+## ----smr----------------------------------------------------------------------
 # get rid of under 10's
 larynxRates = larynxRates[grep("_(0|5)$",names(larynxRates), invert=TRUE)]
 # compute Sexpected
@@ -67,70 +43,24 @@ kentucky = diseasemapping::getSMR(
     model = larynxRates, 
     casedata=larynx, 
     regionCode="County")
-@
 
-
-
-\section*{The BYM model}
-
-The Besag, York and Mollie model for Poisson distributed case counts is:
-
-\begin{align*}
-Y_i \sim & \text{Poisson}(O_i \lambda_i)\\
-\log(\mu_i) = &X_i \beta + U_i\\
-U_i \sim & \text{BYM}(\sigma_1^2 , \sigma_2^2)\\
-\end{align*}
-
-\begin{itemize}
-\item $Y_i$ is the response variable for region $i$
-\item $O_i$ is the 'baseline' expected count, which is specified 
-\item  $X_i$ are covariates
-\item $U_i$ is a spatial random effect with a spatially structured variance parameter $\sigma_1^2$
-and a spatially independent variance $\sigma_2^2$
-\end{itemize}
-
-
-
-
-
-
-\section*{Gamma priors on precision}
-
-
-
-
-<<bymGamma, tidy=TRUE>>=
+## ----bymGamma, tidy=TRUE------------------------------------------------------
 kBYM = kBYMpc = try(bym(
 		formula = observed ~ offset(logExpected) + poverty,
     data=kentucky,
     priorCI = list(sdSpatial=c(0.1, 5), sdIndep=c(0.1, 5)),
 		region.id="County"
 ))
-@
 
-
-<<bymTry, include=FALSE>>=
+## ----bymTry, include=FALSE----------------------------------------------------
 if(class(kBYM) == 'try-error') 
 	kBYM = list()
-@
 
-Above, Gamma priors are assigned to 
-$1/\sigma_1^2$ and $1/\sigma_2^2$, with the shape and scale parameters 
-set to produce 
-2.5\% to 97.5\% prior intervals of $(0.1, 5)$ for each standard deviation
-parameter.
-
-
-
-
-<<summary>>=
+## ----summary------------------------------------------------------------------
 if(!is.null(kBYM$parameters))
 	knitr::kable(kBYM$parameters$summary[,c(1,3,5)], digits=3)
-@
 
-
-
-<<priorPost, fig.cap="gamma priors sd parameters", fig.height=4, fig.width=3, fig.subcap=c("spatial", "indep"), echo=FALSE>>=
+## ----priorPost, fig.cap="gamma priors sd parameters", fig.height=4, fig.width=3, fig.subcap=c("spatial", "indep"), echo=FALSE----
 
 if(!is.null(kBYM$parameters)) {
 	
@@ -149,17 +79,8 @@ legend('topright', lty=1, col=c('black','blue'), legend=c('posterior','prior'))
 	plot(1:10, type='n')
 	text(5,5,'inla is not installed')
 }
-@
 
-
-
-
-\section*{BYM with penalised complexity prior}
-
-`propSpatial = c(u=0.5, alpha=0.8)` means $pr(\phi < 0.5) = 0.8$, which is different from the specification of `pc.prec`
-
-
-<<bymPc, tidy=TRUE>>=
+## ----bymPc, tidy=TRUE---------------------------------------------------------
 kBYMpc = try(
 bym(
 	formula = observed ~ offset(logExpected) + poverty,
@@ -168,28 +89,16 @@ bym(
       sd=c(u=1, alpha=0.05), 
       propSpatial = c(u=0.5, alpha=0.8)),
   verbose=TRUE), silent=TRUE)
-@
 
-<<bymPcTry, include=FALSE>>=
+## ----bymPcTry, include=FALSE--------------------------------------------------
 if(class(kBYMpc) == 'try-error') 
 	kBYMpc = list()
-@
 
-
-Here penalized complexity priors are used with
-$pr(\sqrt{\sigma_1^2+\sigma_2^2} > 1) = 0.05$ and
-$$
-pr(\sigma_1/\sqrt{\sigma_1^2 + \sigma_2^2} < 0.5) = 0.8.
-$$
-
-<<summaryPc>>=
+## ----summaryPc----------------------------------------------------------------
 if(!is.null(kBYMpc$parameters))
 	knitr::kable(kBYMpc$parameters$summary[,c(1,3,5)], digits=3)
-@
 
-
-
-<<priorPostPc, fig.cap="PC priors variance parameters", fig.height=4, fig.width=3, fig.subcap=c("sd","prop spatial"), echo=FALSE>>=
+## ----priorPostPc, fig.cap="PC priors variance parameters", fig.height=4, fig.width=3, fig.subcap=c("sd","prop spatial"), echo=FALSE----
 
 if(!is.null(kBYMpc$parameters)) {
 	
@@ -211,32 +120,8 @@ legend('topright', lty=1, col=c('black','blue'), legend=c('posterior','prior'))
 	plot(1:10, type='n')
 	text(5,5,'inla is not installed')
 }
-@
 
-<<checkPropSpatial, eval=FALSE, include=FALSE, purl=FALSE>>=
-
-noData = bym(
-	formula = observed ~ offset(logExpected) + poverty,
-    kentucky,
-	prior = list(
-      sd=c(u=1, alpha=0.05), 
-      propSpatial = c(u=0.25, alpha=0.8)))
-
-	plot(noData$inla$marginals.hyperpar$Phi, type='l')
-	lines(noData$parameters$propSpatial$prior, col='red', lty=2)
-	abline(v=0.25)
-
-
-
-
-	theCdf = data.frame(
-		propSpatial = kBYMpc$parameters$propSpatial$prior[-1,1],
-		cdf = cumsum(kBYMpc$parameters$propSpatial$prior[-1,2]*diff(kBYMpc$parameters$propSpatial$prior[,1]))
-		)
-	approx(theCdf$propSpatial, theCdf$cdf, kBYMpc$parameters$propSpatial$params.intern[1])
-@
-
-<<maps, fig.cap='Random effects and fitted values', fig.subcap=c('gamma, fitted','pc fitted','gamma random','pc random'), echo=FALSE>>=
+## ----maps, fig.cap='Random effects and fitted values', fig.subcap=c('gamma, fitted','pc fitted','gamma random','pc random'), echo=FALSE----
 
 if(require('mapmisc', quietly=TRUE) & !is.null(kBYMpc$parameters)) {
 	
@@ -284,8 +169,4 @@ legendBreaks('topleft', colRpc, cex=thecex)
 	plot(1:10, type='n')
 	text(5,5,'inla is not installed')
 }
-@
 
-
-\end{document}
-  

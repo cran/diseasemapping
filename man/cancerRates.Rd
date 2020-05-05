@@ -83,7 +83,8 @@ vector of cancer rates, by age and sex group
 # won't work if offline or if the iarc web site is down
 
 if(interactive() | Sys.info()['user'] =='patrick') {	 
-  qcLungF=cancerRates(area="canada", year=2001:2002, site="lung", sex="F")
+  qcLungF=cancerRates(area="canada", 
+  	year=2001:2002, site="lung", sex="F")
 } else {
 	qcLungF = structure(c(0, 5e-06, 0, 0, 5e-06, 1e-05, 0, 3.4e-05, 9.6e-05, 
 0.000211, 0.000559, 0.001289, 0.002003, 0.002508, 0.002728, 0.003189, 
@@ -103,7 +104,7 @@ names(qcLungExp)
 if(require('mapmisc', quietly=TRUE)) {
 
 	mycol = colourScale(qcLungExp$expected, 
-		breaks=9, dec=0, transform='log', style='equal')
+		breaks=12, dec=0, style='quantile')
 	plot(popdata[1:400,])
 	plot(qcLungExp, col=mycol$plot, border='#00000040',add=TRUE)
 	legendBreaks('topright', mycol)

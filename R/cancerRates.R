@@ -10,7 +10,7 @@ cancerRates = function(area = "canada",
 
 
   areaCodes =
-  c("Canada"=1240099,
+  c("Canada"=12400000,
   "Newfoundland"=1240899,
 "Prince Edward Island"=1240799,
 "Nova Scotia"=1240699,
@@ -47,13 +47,14 @@ result = list()
 rates=NULL
 for(Dsex in names(sexes)) {
 fs<-paste("http://ci5.iarc.fr/CI5plus/old/Table4r.asp?registry=",area,(paste("&period=",year,sep="",collapse="")),"&sex=", sexes[Dsex],"&window=1&text=1&stat=0&submit=Execute",sep="")
-tempn = scan(fs, what="a", quiet=TRUE)
-theurl=(paste("http://ci5.iarc.fr/", 
-					gsub("^HREF=", "", grep("href=/data", 
-									iconv(tempn,to="UTF-8"), value=TRUE, 
-									ignore.case=TRUE)), sep=""))
-theurl = url(theurl)
-forAttribute = scan(theurl, what="a", sep="\t", nmax=1, quiet=TRUE)
+tempn = scan(fs, what="a", quiet=TRUE, sep='\n')
+theurl1 = grep("HREF=/Data/", tempn, value=TRUE)
+theurl2 = gsub(".*HREF=/Data/", "http://ci5.iarc.fr/Data/", theurl1)
+theurl3= gsub("[.]txt.*", ".txt", theurl2)
+
+theurl = url(theurl3)
+forAttribute = scan(theurl, what="a", sep="\n", nmax=1, quiet=TRUE)
+forAttribute = gsub("(^ [(])|[)]|\t.*-", "", forAttribute)
 result[[Dsex]]=utils::read.table(theurl, header=TRUE,skip=1, 
 		fill=TRUE, sep="\t", as.is=TRUE)
 }

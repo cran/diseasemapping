@@ -156,15 +156,17 @@ legend('topright', lty=1, col=c('black','blue'), legend=c('posterior','prior'))
 
 \section*{BYM with penalised complexity prior}
 
+`propSpatial = c(u=0.5, alpha=0.8)` means $pr(\phi < 0.5) = 0.8$, which is different from the specification of `pc.prec`
+
 
 <<bymPc, tidy=TRUE>>=
 kBYMpc = try(
 bym(
 	formula = observed ~ offset(logExpected) + poverty,
     kentucky,
-	priorCI = list(
-      sd=c(1, 0.05), 
-      propSpatial = c(0.9, 0.5)),
+	prior = list(
+      sd=c(u=1, alpha=0.05), 
+      propSpatial = c(u=0.5, alpha=0.8)),
   verbose=TRUE), silent=TRUE)
 @
 
@@ -175,7 +177,10 @@ if(class(kBYMpc) == 'try-error')
 
 
 Here penalized complexity priors are used with
-$pr(\sqrt{\sigma_1^2+\sigma_2^2} > 1) = 0.05$ and $pr(\sigma_1/\sigma_0 < 0.2) = 0.95$.
+$pr(\sqrt{\sigma_1^2+\sigma_2^2} > 1) = 0.05$ and
+$$
+pr(\sigma_1/\sqrt{\sigma_1^2 + \sigma_2^2} < 0.5) = 0.8.
+$$
 
 <<summaryPc>>=
 if(!is.null(kBYMpc$parameters))
@@ -191,12 +196,14 @@ if(!is.null(kBYMpc$parameters)) {
 plot(kBYMpc$parameters$sd$posterior, type='l', 
 		xlim=c(0,1))
 lines(kBYMpc$parameters$sd$prior, col='blue')
-legend('topright', lty=1, col=c('black','blue'), legend=c('posterior','prior'))
+abline(v=kBYMpc$parameters$sd$params.intern[1], lty=3)
+legend('topright', lty=1, col=c('black','blue'), legend=c('posterior','prior'), bg='white')
 
 plot(kBYMpc$parameters$propSpatial$posterior, 
   type='l', 
 		xlim=c(0, 1))
 lines(kBYMpc$parameters$propSpatial$prior, col='blue')
+abline(v=kBYMpc$parameters$propSpatial$params.intern[1], lty=3)
 legend('topright', lty=1, col=c('black','blue'), legend=c('posterior','prior'))
 } else {
 	plot(1:10, type='n')
@@ -206,7 +213,28 @@ legend('topright', lty=1, col=c('black','blue'), legend=c('posterior','prior'))
 }
 @
 
+<<checkPropSpatial, eval=FALSE, include=FALSE, purl=FALSE>>=
 
+noData = bym(
+	formula = observed ~ offset(logExpected) + poverty,
+    kentucky,
+	prior = list(
+      sd=c(u=1, alpha=0.05), 
+      propSpatial = c(u=0.25, alpha=0.8)))
+
+	plot(noData$inla$marginals.hyperpar$Phi, type='l')
+	lines(noData$parameters$propSpatial$prior, col='red', lty=2)
+	abline(v=0.25)
+
+
+
+
+	theCdf = data.frame(
+		propSpatial = kBYMpc$parameters$propSpatial$prior[-1,1],
+		cdf = cumsum(kBYMpc$parameters$propSpatial$prior[-1,2]*diff(kBYMpc$parameters$propSpatial$prior[,1]))
+		)
+	approx(theCdf$propSpatial, theCdf$cdf, kBYMpc$parameters$propSpatial$params.intern[1])
+@
 
 <<maps, fig.cap='Random effects and fitted values', fig.subcap=c('gamma, fitted','pc fitted','gamma random','pc random'), echo=FALSE>>=
 

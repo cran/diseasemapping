@@ -8,6 +8,11 @@ print(havePackages)
 library('diseasemapping')
 data('kentucky')
 
+
+
+
+
+
 if(FALSE) {
 	# must have an internet connection to do the following
 	larynxRates= cancerRates("USA", year=1998:2002,site="Larynx")

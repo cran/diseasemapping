@@ -86,6 +86,10 @@ bym.needAdjmat = function(
 		...) {	
  	
 	if(requireNamespace("spdep", quietly=TRUE)) {
+		if(missing(region.id)) {
+			region.id = 'region.id'
+			data[[region.id]]=1:length(data)
+		}
 		adjMatNB=spdep::poly2nb(data, row.names =  data[[region.id]] )
 	} else {
 		adjMatNB = NULL
@@ -150,7 +154,7 @@ bym.data.frame = function(formula, data,adjMat,		region.id,
 		# if using windows, replace back slashes with forward slashes...
 		graphfile = gsub("\\\\", "/", graphfile)
 		
-		region.index = nbToInlaGraph(adjMat, graphfile)
+		region.index = diseasemapping::nbToInlaGraph(adjMat, graphfile)
 		
 		# check for regions without neighbours
 		badNeighbours = which(
@@ -260,8 +264,9 @@ bym.data.frame = function(formula, data,adjMat,		region.id,
 	allVars = all.vars(formula)
 	formula = stats::update(formula, stats::as.formula(bymTerm))
 
-
-
+	if(!all(allVars %in% names(data))) {
+		warning(paste("missing variables", toString(setdiff(allVars, names(data)))))
+	}
 
 	# INLA doesn't like missing values in categorical covariates
 	# remove rows with NA's 
@@ -280,14 +285,17 @@ bym.data.frame = function(formula, data,adjMat,		region.id,
 	###################
 		# fitted values
 
- # get rid of left side of formula
+# get rid of left side of formula
 #  formulaForLincombs =  formulaRhs(formula.fitted,char=TRUE)
 formulaForLincombs = base::format(formula.fitted)
 # if there is a line break in the formula, 
 # format(formula) will create a vector
 formulaForLincombs = paste(formulaForLincombs, collapse="")
-formulaForLincombs = gsub("^.*~", "", toString(formulaForLincombs))
- 
+formulaForLincombs = toString(formulaForLincombs)
+#formulaForLincombs = gsub("^.*~", "", toString(formulaForLincombs))
+theTilde = gregexpr("[~]",  formulaForLincombs)[[1]][1]
+formulaForLincombs = substr(formulaForLincombs, theTilde+1, nchar(formulaForLincombs))
+
 # get rid of f(stuff) in formula
 formulaForLincombs =
 		gsub("f\\([[:print:]]*\\)", "", formulaForLincombs)
@@ -447,7 +455,7 @@ formulaForLincombs = gsub("\\+[[:space:]]+?$|^[[:space:]]?\\+[[:space:]]+", "", 
 	
 	# E inv logit(lincombs)
 
-	if(length(grep("binomial",inlaRes$.args$family))) {
+	if(length(grep("^binomial$",inlaRes$.args$family))) {
 		invlogit=unlist(
 				lapply(inlaRes$marginals.fitted.bym, 
 						function(qq) {
