@@ -123,7 +123,7 @@ Patrick Brown
 
 
 \seealso{
-\url{http://r-inla.org}, 
+\url{https://www.r-inla.org}, 
 \Sexpr[results=rd]{c(
   '\\\\code{inla}', 
   '\\\\code{\\\\link[INLA]{inla}}'

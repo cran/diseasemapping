@@ -153,7 +153,7 @@ setMethod("getSMR",
 					...
 			)
 
-   if(class(model)=='formula') {
+   if(any(class(model)=='formula')) {
 			casecol = rownames(attributes(model$terms)$factors)[
 					attributes(stats::terms(model$formula))$response
 			]
