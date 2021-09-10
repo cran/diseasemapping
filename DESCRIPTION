@@ -1,10 +1,10 @@
 Package: diseasemapping
 Type: Package
 Title: Modelling Spatial Variation in Disease Risk for Areal Data
-Version: 1.5.0
-Date: 2021-03-09
+Version: 1.5.1
+Date: 2021-09-09
 Depends: R (>= 3.5.0)
-Imports: stats, utils, sp, methods
+Imports: stats, utils, sp, methods, rgeos
 Suggests: spdep, mgcv, geostatsp, mapmisc (>= 1.0), knitr
 Enhances: INLA, XML
 Additional_repositories: https://inla.r-inla-download.org/R/testing
@@ -16,8 +16,8 @@ License: GPL
 VignetteBuilder: knitr
 Repository: CRAN
 Repository/R-Forge/Project: diseasemapping
-Repository/R-Forge/Revision: 2626
-Repository/R-Forge/DateTimeStamp: 2021-03-10 17:42:52
-Date/Publication: 2021-03-11 23:30:02 UTC
+Repository/R-Forge/Revision: 2814
+Repository/R-Forge/DateTimeStamp: 2021-09-09 13:48:10
+Date/Publication: 2021-09-10 08:00:11 UTC
 NeedsCompilation: no
-Packaged: 2021-03-10 17:47:20 UTC; rforge
+Packaged: 2021-09-09 14:08:20 UTC; rforge
