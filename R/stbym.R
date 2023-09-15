@@ -71,14 +71,9 @@ stbym = function(
   }
   region.id = region.id[c('data','spatial')]
 
-  if(class(adjMat) == 'SpatialPolygons') {
-    theRegionId = data.frame(xx = 1:length(adjMat))
-    names(theRegionId) = region.id[2]
-    rownames(theRegionId) = names(adjMat)
-    adjMat = sp::SpatialPolygonsDataFrame(adjMat, theRegionId)
-  }
-  if(class(adjMat) == 'SpatialPolygonsDataFrame') {
-      adjMat = spdep::poly2nb(adjMat, row.names=adjMat@data[[ region.id[2] ]])
+  if(inherits(adjMat, 'SpatVector')) {
+    adjMatRegionId = terra::values(adjMat)[, region.id[2]]
+    adjMat = terra::adjacent(adjMat)
   }
 
   if(missing(prior)) prior = list()

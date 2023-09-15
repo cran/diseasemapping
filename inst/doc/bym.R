@@ -16,6 +16,7 @@ if(Sys.info()['sysname'] =='Linux' &
 ## ----packages-----------------------------------------------------------------
 require('diseasemapping')
 data('kentucky')
+kentucky = terra::unwrap(kentucky)
 
 ## ----rates, tidy=TRUE---------------------------------------------------------
 if(FALSE) {
@@ -45,10 +46,10 @@ kentucky = diseasemapping::getSMR(
     regionCode="County")
 
 ## ----bymGamma, tidy=TRUE------------------------------------------------------
-kBYM = kBYMpc = try(bym(
+kBYM = try(bym(
 		formula = observed ~ offset(logExpected) + poverty,
     data=kentucky,
-    priorCI = list(sdSpatial=c(0.1, 5), sdIndep=c(0.1, 5)),
+    prior = list(sdSpatial=c(0.01, 0.2), sdIndep=c(0.01, 0.2)),
 		region.id="County"
 ))
 
@@ -101,7 +102,8 @@ if(!is.null(kBYMpc$parameters))
 ## ----priorPostPc, fig.cap="PC priors variance parameters", fig.height=4, fig.width=3, fig.subcap=c("sd","prop spatial"), echo=FALSE----
 
 if(!is.null(kBYMpc$parameters)) {
-	
+
+par(mar = c(3,3,0,0))	
 plot(kBYMpc$parameters$sd$posterior, type='l', 
 		xlim=c(0,1))
 lines(kBYMpc$parameters$sd$prior, col='blue')
@@ -131,31 +133,27 @@ colFit = colourScale(kBYM$data$fitted.exp,
 		breaks=6, dec=1, style='equal')
 
 
-map.new(kBYM$data)
-plot(kBYM$data, col=colFit$plot, add=TRUE)
+plot(kBYM$data, col=colFit$plot)
 legendBreaks('topleft', colFit, cex=thecex)
 
 colFitPc = colourScale(kBYMpc$data$fitted.exp,
 		breaks=colFit$breaks, style='fixed',
 		col=colFit$col)
 
-map.new(kBYM$data)
-plot(kBYMpc$data, col=colFitPc$plot, add=TRUE)
+plot(kBYMpc$data, col=colFitPc$plot)
 legendBreaks('topleft', colFitPc, cex=thecex)
 
 colR = colourScale(kBYM$data$random.mean,
 		breaks=12, dec=-log10(0.05), style='equal')
 
-map.new(kBYM$data)
-plot(kBYM$data, col=colR$plot, add=TRUE)
+plot(kBYM$data, col=colR$plot)
 legendBreaks('topleft', colR, cex=thecex)
 
 colRpc = colourScale(kBYMpc$data$random.mean,
 		breaks=colR$breaks, col=colR$col, 
 		style='fixed')
 
-map.new(kBYM$data)
-plot(kBYMpc$data, col=colRpc$plot, add=TRUE)
+plot(kBYMpc$data, col=colRpc$plot)
 legendBreaks('topleft', colRpc, cex=thecex)
 
 

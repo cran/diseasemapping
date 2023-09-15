@@ -16,8 +16,13 @@ getStdRate(relativeRate, model, referencePopulation, scale = 1e+05)
 
 \author{Lutong Zhou }
 
+\value{
+  numeric value, incidence rate in reference population.
+}
+
 \examples{
 data(kentucky)
+kentucky = terra::unwrap(kentucky)
 
 kentucky2 = getSMR(kentucky, larynxRates, larynx, 
 		regionCode="County")

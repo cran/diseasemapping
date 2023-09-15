@@ -63,6 +63,7 @@ usCancer = function(
 		sex='both'
 		) {
 			
+			verbose = TRUE
 			
 
 			
@@ -114,10 +115,10 @@ usCancer = function(
 				myDir = file.path(tempdir(), gsub("[[:space:]]+", "_", paste(c("cfiles",as.character(namesHere)), collapse='_')))
 				
 				myCommand = paste("httrack --depth=",depth, " --priority=1 -N1 -O ", myDir, " \'",  kUrl,  "\'", sep='')
-				cat('\ndownloading', paste(namesHere, collapse=" "))
+				if(verbose) cat('\ndownloading', paste(namesHere, collapse=" "))
 				sRes = try(system(myCommand))
-				cat(' done\n')
-				if(class(sRes)=='try-error') {
+				if(verbose) cat(' done\n')
+				if(inherits(sRes, 'try-error')) {
 					stop("install httrack from www.httrack.com")
 				}
 				

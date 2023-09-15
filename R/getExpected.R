@@ -125,7 +125,7 @@ setMethod("getExpected",
 			# converted to character first in case it's a factor
 			# (convert factor names to integers, not factor levels)
 			
-			if(class(poplong[,p]) != "numeric"){
+			if(inherits(poplong[,p], "numeric")){
 				poplong[,p] <- as.numeric(as.character(poplong[,p]))
 			}
 			

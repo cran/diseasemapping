@@ -15,6 +15,10 @@ getBreaks(colNames, breaks = NULL)
   \item{breaks}{the age breaks, i.e breaks =seq(0, 80, by= 10) }
 }
  
+\value{
+  vector of ages
+}
+
 \examples{
 data('kentucky')
 ageBreaks = getBreaks(names(kentucky), breaks=c(seq(0, 80, by=10), Inf))

@@ -11,7 +11,7 @@ setGeneric('getSMR',
 )
 
 setMethod("getSMR", 
-		signature("SpatialPolygonsDataFrame", 'ANY','ANY', "ANY", "ANY"),
+		signature("SpatVector", 'ANY','ANY', "ANY", "ANY"),
 		function(
 				popdata, model,  casedata, 
 				regionCode,
@@ -19,24 +19,20 @@ setMethod("getSMR",
 				sex=c('m','f'), ...
 		) {
 			
-			area = !length(grep("longlat", popdata@proj4string@projargs))
 			
-			if (area & !("surfaceArea" %in% names(popdata) ) ) {
-				popdata$surfaceArea = sapply(methods::slot(popdata, "polygons"), 
-						methods::slot, "area")
+			if ( !("surfaceArea" %in% names(popdata) ) ) {
+				popdata$surfaceArea = terra::expanse(popdata, unit='m')
 			}	
 			
 			popdata$idForGetSmr = 1:length(popdata)
 			theSP = popdata
-			popdata = data.frame(popdata)
+
+			popdata = terra::values(popdata)
 			
 			forSp <- methods::callGeneric()
 			
-			theSP@data = forSp[pmatch(
-							theSP$idForGetSmr,
-							forSp$idForGetSmr
-					),]
-			theSP = theSP[,grep("^idForGetSmr$", names(theSP), invert=TRUE)]    
+			terra::values(theSP) = forSp
+
 			theSP
 		}
 )
@@ -292,13 +288,7 @@ setMethod("getSMR",
 					#casedata = casedataWhenNocases
 				#}
 				
-				# Compute area if spdf not in long-lat
-				if(length(grep("Spatial*DataFrame", class(popdata)))) {
-					if(!length(grep("longlat", popdata@proj4string@projargs))) {
-						areas <- unlist(computeArea(popdata))
-						popdata$sqk <- areas * area.scale
-					}
-				}
+				popdata$sqk = terra::expanse(popdata, unit='km')* area.scale
 				
 				# scaling factor to convert to person years
 				popScale = interval[names(interval)==Dyear]

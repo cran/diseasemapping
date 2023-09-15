@@ -2,7 +2,7 @@
 \docType{methods}
 \alias{getSMR}
 \alias{getSMR-methods}
-\alias{getSMR,SpatialPolygonsDataFrame,ANY,ANY,ANY,ANY-method}
+\alias{getSMR,SpatVector,ANY,ANY,ANY,ANY-method}
 \alias{getSMR,list,ANY,ANY,ANY,ANY-method}
 \alias{getSMR,data.frame,ANY,missing,missing,missing-method}
 
@@ -20,7 +20,7 @@ It will also merge back the observed value, expected value and the ratio back to
 }
 
 \usage{
-\S4method{getSMR}{SpatialPolygonsDataFrame,ANY,ANY,ANY,ANY}(
+\S4method{getSMR}{SpatVector,ANY,ANY,ANY,ANY}(
 popdata, model, casedata, regionCode , regionCodeCases , 
 area.scale = 1,  sex=c('m','f'),...
 )
@@ -80,11 +80,18 @@ Otherwise, \code{model} is passed to the \code{predict} function.
  
 \examples{
 data(kentucky)
+kentucky = terra::unwrap(kentucky)
 
 kentucky2 = getSMR(kentucky, larynxRates, larynx, 
 		regionCode="County")
 
-data.frame(kentucky2)[1:10,grep("^F|^M", names(kentucky2), invert=TRUE)]
+terra::values(kentucky2)[1:10,grep("^F|^M", names(kentucky2), invert=TRUE)]
+
+theBreaks = signif(seq(0, max(kentucky2$SMR, na.rm=TRUE), len=9),1)
+theCol = heat.colors(length(theBreaks)-1)
+terra::plot(kentucky2, col=theCol, breaks = theBreaks)
+legend('left', fill=theCol, legend = paste(theBreaks[-length(theBreaks)], ' - ', theBreaks[-1]))
+
 
 }
  

@@ -81,11 +81,10 @@ vector of cancer rates, by age and sex group
 \examples{
 
 # won't work if offline or if the iarc web site is down
+qcLungF=try(cancerRates(area="canada", 
+  	year=2001:2002, site="lung", sex="F"), silent=TRUE)
 
-if(interactive() | Sys.info()['user'] =='patrick') {	 
-  qcLungF=cancerRates(area="canada", 
-  	year=2001:2002, site="lung", sex="F")
-} else {
+if(length(grep("try-error", class(qcLungF)))) {
 	qcLungF = structure(c(0, 5e-06, 0, 0, 5e-06, 1e-05, 0, 3.4e-05, 9.6e-05, 
 0.000211, 0.000559, 0.001289, 0.002003, 0.002508, 0.002728, 0.003189, 
 0.002792, 0.001905), .Names = c("F_0", "F_5", "F_10", "F_15", 
@@ -96,6 +95,7 @@ area = "Canada", year = "2001-2002")
 qcLungF
 
 data('popdata')
+popdata = terra::unwrap(popdata)
 
 qcLungExp = getSMR(popdata, qcLungF)
 

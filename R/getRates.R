@@ -21,19 +21,13 @@ attributes(casedata)$casecol = casecol
 
 morethanoneyear = class(popdata)=="list"
 
-#if s() is in formula, use GAM
-useGam <- length(grep("s\\(",formula))>0
-if(useGam & requireNamespace("mgcv", quietly = TRUE)) {
-  modelFittingFunction = mgcv::gam
-} else {
-  modelFittingFunction = stats::glm
-}
+
 
 #is SP or not
 if(morethanoneyear){
-  isSP = (class(popdata[[1]])== "SpatialPolygonsDataFrame")
+  isSP = (class(popdata[[1]])== "SpatVector")
 }else{
-  isSP = (class(popdata)== "SpatialPolygonsDataFrame")
+  isSP = (class(popdata)== "SpatVector")
 }
 
 #if years not supplied, use the names of list
@@ -101,7 +95,7 @@ if(length(termsToAdd) ) {
   if(morethanoneyear)
     warning("All covariates must be added to case data if popdata is a list")
    colsToTry = popdata[,-grep("^(M|F)[[:digit:]]", names(popdata))]
-     if(isSP) colsToTry = colsToTry@data
+     if(isSP) colsToTry = terra::values(colsToTry)
 
   # find column to merge on
   commonCol = names(casedata)[(names(casedata) %in% names(popdata))]
@@ -119,9 +113,9 @@ if(length(termsToAdd) ) {
   } else {
     colPop = colCase = commonCol[1]
   }
-  cat("adding variable ", toString(termsToAdd), " to case data using \n",
-    "columns ", colPop, " and ", colCase, ".\n")
-  cat("add variable to casedata manually if this is not correct\n")
+  message(paste0("adding variable ", toString(termsToAdd), " to case data using \n",
+    "columns ", colPop, " and ", colCase, ".\n", 
+   "add variable to casedata manually if this is not correct\n"))
     
   casedata = merge(casedata, colsToTry[,c(colPop,termsToAdd)], 
     by.x=colCase, by.y=colPop)
@@ -199,23 +193,20 @@ if(!is.null(fit.numeric)){
 #if(length(S)==1) formula=update.formula(formula, todel)
 
 # add cases and logpop to formula
-formula1 = stats::update.formula(formula, 
+formula1 = stats::update.formula(
+    formula, 
 		stats::as.formula(paste(casecol," ~ offset(logpop) + ."))
 )
 #return(newdata, formula1)
 
-
-#fit model, if there is an error, return data only
-options(show.error.messages = FALSE)
- 
-model <- modelFittingFunction(formula1, family=family, data=newdata)
-
-if(class(model)[1]=="try-error"){
-  warning(model[1],"Only Data will be returned")
-  return(newdata)
+#if s() is in formula, use GAM
+useGam <- length(grep("s\\(",formula))>0
+if(useGam & requireNamespace("mgcv", quietly = TRUE)) {
+  model <-  mgcv::gam(formula = formula1, family = family, data=newdata)
+} else {
+  model <-  stats::glm(formula = formula1, family = family, data=newdata)
 }
 
-options(show.error.messages = TRUE)
 model$sexSubset = S
 model$data<-newdata
 #attributes(model)$years = ageBreaks$breaks

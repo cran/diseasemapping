@@ -9,6 +9,7 @@ if(class(larynxRates)=='try-error') {
 	larynxRates
 
 data("kentucky")
+kentucky = unwrap(kentucky)
 
 kentucky2 = getSMR(kentucky, larynxRates, larynx, 
 		regionCode="County")

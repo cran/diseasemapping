@@ -1,7 +1,7 @@
 #' @export
 `formatCases` <- function(casedata, ageBreaks=NULL, years=NULL, aggregate.by=NULL) {
 
-if(class(casedata)!="data.frame")
+if(!inherits(casedata, "data.frame"))
   warning("class of casedata should be data.frame, casedata provided is ", class(casedata))
 
 

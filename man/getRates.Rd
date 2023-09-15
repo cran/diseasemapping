@@ -44,6 +44,7 @@ getRates(casedata, popdata, formula, family = 'poisson', minimumAge = 0,
 
 data('casedata')
 data('popdata')
+popdata = terra::unwrap(popdata)
 therates = getRates(casedata, popdata, ~sex*age,
 	breaks=c(seq(0, 80, by=10), Inf))
 therates
