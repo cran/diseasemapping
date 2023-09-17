@@ -59,7 +59,7 @@ cat(readLines(nFile, n=5), sep='\n')
 
 \donttest{
 # there will be a warning about zero neighbours
-junk = bym(poverty ~ 1, data=kSub, family='gaussian')
+junk = bym(poverty ~ 1, data=kSub, family='gaussian', num.threads=3)
 }
 
 

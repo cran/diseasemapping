@@ -26,7 +26,8 @@ if(all(havePackages)){
 			adjMat = kentuckyAdjMat,
       prior = list(sd=c(0.1, 0.5), propSpatial=c(0.5, 0.5)),
 			region.id='County',
-			control.predictor=list(compute=TRUE)
+			control.predictor=list(compute=TRUE),
+			num.threads=2
   )
 	kBYM$parameters$summary
 
@@ -45,7 +46,8 @@ if(all(havePackages)){
 kBYM = bym(
 		formula = observed ~ offset(logExpected),
 		prior = list(sd = 0.5, propSpatial = 0.5),
-		data=kentucky)
+		data=kentucky,
+			num.threads=2)
 
 
 
@@ -79,7 +81,8 @@ kBYM = bym(
     formula=observed ~ offset(logExpected) + poverty,
     data=terra::values(kentucky)[-(1:4),],  
  	  adjMat = kentuckyAdjMat, region.id="County",
-		prior = list(sd=0.1, propSpatial = 0.1))
+		prior = list(sd=0.1, propSpatial = 0.1),
+			num.threads=2)
  
 
 kBYM$par$summary
@@ -88,7 +91,8 @@ kBYM$par$summary
 
 
 kBYM = bym(data=kentucky,  formula=observed ~ 1,
-		prior = list(sd=1, propSpatial=0.9))
+		prior = list(sd=1, propSpatial=0.9),
+			num.threads=2)
 
 kBYM$par$summary
 
@@ -112,7 +116,8 @@ kentucky[1:2,-grep("County", names(kentucky))] = NA
 kBYM = bym(observed ~ offset(logExpected) + poverty,
 		kentucky, 
 		region.id="County",
-		prior = list(sd=0.1, propSpatial = 0.5))
+		prior = list(sd=0.1, propSpatial = 0.5),
+			num.threads=2)
 
  
 kBYM$par$summary
@@ -130,7 +135,8 @@ kBYM = bym(
 		formula = observed ~ offset(logExpected) + povertyFac,
 		data = kentucky, 
 		region.id="County",
-		prior = list(sd=c(0.1, 0.5), propSpatial=c(0.1, 0.5))
+		prior = list(sd=c(0.1, 0.5), propSpatial=c(0.1, 0.5)),
+			num.threads=2
 )
 
 

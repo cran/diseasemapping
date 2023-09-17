@@ -1,17 +1,6 @@
 ## ----knitr, include=FALSE-----------------------------------------------------
 require('knitr')
 opts_chunk$set(out.width='0.48\\textwidth', fig.align='default', fig.height=3, fig.width=6)
-if(Sys.info()['sysname'] =='Linux' &
-  requireNamespace("INLA")) {   
-  INLA::inla.setOption(inla.call = 
-      system.file(paste(
-          "bin/linux/",          
-          ifelse(
-            .Machine$sizeof.pointer == 4, 
-            "32", "64"),
-          'bit/inla.static', sep=''),
-        package="INLA")) 
-}
 
 ## ----packages-----------------------------------------------------------------
 require('diseasemapping')
@@ -50,7 +39,8 @@ kBYM = try(bym(
 		formula = observed ~ offset(logExpected) + poverty,
     data=kentucky,
     prior = list(sdSpatial=c(0.01, 0.2), sdIndep=c(0.01, 0.2)),
-		region.id="County"
+		region.id="County",
+			num.threads=2
 ))
 
 ## ----bymTry, include=FALSE----------------------------------------------------
@@ -89,7 +79,8 @@ bym(
 	prior = list(
       sd=c(u=1, alpha=0.05), 
       propSpatial = c(u=0.5, alpha=0.8)),
-  verbose=TRUE), silent=TRUE)
+  verbose=TRUE,
+			num.threads=2), silent=TRUE)
 
 ## ----bymPcTry, include=FALSE--------------------------------------------------
 if(class(kBYMpc) == 'try-error') 
