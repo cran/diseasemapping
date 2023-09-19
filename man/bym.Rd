@@ -123,12 +123,17 @@ larynxRates = larynxRates[-grep("_(0|5)$",names(larynxRates))]
 
 kentucky = getSMR(kentucky, larynxRates, larynx, regionCode="County")
 
+if(requireNamespace('INLA')) {
+  INLA::inla.setOption(num.threads=2)
+  # not all versions of INLA support blas.num.threads
+  try(INLA::inla.setOption(blas.num.threads=2), silent=TRUE)
+}
+
 kBYM <- try(
   bym(
     observed ~ offset(logExpected) + poverty, kentucky,
-	  prior= list(sd=c(0.1, 0.5), propSpatial=c(0.5, 0.5)),
-    num.threads=2
-   ), silent=TRUE)
+	  prior= list(sd=c(0.1, 0.5), propSpatial=c(0.5, 0.5))
+    ), silent=TRUE)
 
 if(length(grep("parameters", names(kBYM)))) {
   kBYM$parameters$summary

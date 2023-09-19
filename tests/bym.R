@@ -4,6 +4,14 @@ havePackages = c(
 
 print(havePackages)
 
+if(havePackages) {
+	INLA::inla.setOption(num.threads=2)
+	# not all versions of INLA support blas.num.threads
+	try(INLA::inla.setOption(blas.num.threads=2), silent=TRUE)
+	print(INLA::inla.getOption('num.threads'))
+}
+
+
 library('diseasemapping')
 data('kentucky')
 kentucky = terra::unwrap(kentucky)
@@ -26,8 +34,7 @@ if(all(havePackages)){
 			adjMat = kentuckyAdjMat,
       prior = list(sd=c(0.1, 0.5), propSpatial=c(0.5, 0.5)),
 			region.id='County',
-			control.predictor=list(compute=TRUE),
-			num.threads=2
+			control.predictor=list(compute=TRUE)
   )
 	kBYM$parameters$summary
 
@@ -46,8 +53,7 @@ if(all(havePackages)){
 kBYM = bym(
 		formula = observed ~ offset(logExpected),
 		prior = list(sd = 0.5, propSpatial = 0.5),
-		data=kentucky,
-			num.threads=2)
+		data=kentucky)
 
 
 
@@ -81,8 +87,7 @@ kBYM = bym(
     formula=observed ~ offset(logExpected) + poverty,
     data=terra::values(kentucky)[-(1:4),],  
  	  adjMat = kentuckyAdjMat, region.id="County",
-		prior = list(sd=0.1, propSpatial = 0.1),
-			num.threads=2)
+		prior = list(sd=0.1, propSpatial = 0.1))
  
 
 kBYM$par$summary
@@ -91,8 +96,7 @@ kBYM$par$summary
 
 
 kBYM = bym(data=kentucky,  formula=observed ~ 1,
-		prior = list(sd=1, propSpatial=0.9),
-			num.threads=2)
+		prior = list(sd=1, propSpatial=0.9))
 
 kBYM$par$summary
 
@@ -116,8 +120,7 @@ kentucky[1:2,-grep("County", names(kentucky))] = NA
 kBYM = bym(observed ~ offset(logExpected) + poverty,
 		kentucky, 
 		region.id="County",
-		prior = list(sd=0.1, propSpatial = 0.5),
-			num.threads=2)
+		prior = list(sd=0.1, propSpatial = 0.5))
 
  
 kBYM$par$summary
@@ -135,8 +138,7 @@ kBYM = bym(
 		formula = observed ~ offset(logExpected) + povertyFac,
 		data = kentucky, 
 		region.id="County",
-		prior = list(sd=c(0.1, 0.5), propSpatial=c(0.1, 0.5)),
-			num.threads=2
+		prior = list(sd=c(0.1, 0.5), propSpatial=c(0.1, 0.5))
 )
 
 

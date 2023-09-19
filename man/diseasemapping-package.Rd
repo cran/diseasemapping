@@ -39,7 +39,7 @@ if(require("INLA", quietly=TRUE)) {
 kBYM = bym(observed ~ offset(logExpected) + poverty, 
 	data= kentucky2, 
 	prior = list(sd=c(0.1, 0.5), propSpatial=c(0.5, 0.5)),
-	num.threads=2
+	num.threads=2, blas.num.threads=2
 )
 
 kBYM$par$summary
