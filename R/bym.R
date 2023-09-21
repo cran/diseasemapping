@@ -95,7 +95,8 @@ bym.needAdjmat = function(
 			region.id = 'region.id'
 			terra::values(data)[,region.id]=1:length(data)
 		}
- 	adjMatNB = terra::adjacent(data)
+	# intersects works better than queen, queen misses some neighbours
+ 	adjMatNB = terra::adjacent(data, type='intersects')
  	attributes(adjMatNB)$region.id = unname(unlist(data[[region.id]]))
 
 	methods::callGeneric(

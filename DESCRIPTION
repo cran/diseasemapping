@@ -1,8 +1,8 @@
 Package: diseasemapping
 Type: Package
 Title: Modelling Spatial Variation in Disease Risk for Areal Data
-Version: 2.0.2
-Date: 2023-09-18
+Version: 2.0.3
+Date: 2023-09-20
 Depends: R (>= 3.5.0)
 Imports: stats, utils, terra, methods
 Suggests: mgcv, mapmisc (>= 1.9.0), knitr
@@ -19,9 +19,9 @@ Description: Formatting of population and case data, calculation of Standardized
 License: GPL
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2023-09-18 17:26:13 UTC; patrick
+Packaged: 2023-09-21 13:18:56 UTC; patrick
 Author: Patrick Brown [aut, cre, cph],
   Lutong Zhou [aut]
 Maintainer: Patrick Brown <patrick.brown@utoronto.ca>
 Repository: CRAN
-Date/Publication: 2023-09-19 14:30:02 UTC
+Date/Publication: 2023-09-21 21:10:10 UTC

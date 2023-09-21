@@ -23,7 +23,7 @@ kentucky = terra::unwrap(kentucky)
 kentucky = getSMR(kentucky, larynxRates, larynx,
 		regionCode="County")
 
-kentuckyAdjMat = terra::adjacent(kentucky)
+kentuckyAdjMat = terra::adjacent(kentucky, type='intersects')
 attributes(kentuckyAdjMat)$region.id = kentucky$County
 
 if(all(havePackages)){

@@ -35,11 +35,15 @@ if(require('mapmisc', quietly=TRUE)) {
 
 if(require("INLA", quietly=TRUE)) {
 
+if(requireNamespace('INLA')) {
+  INLA::inla.setOption(num.threads=2)
+  # not all versions of INLA support blas.num.threads
+  try(INLA::inla.setOption(blas.num.threads=2), silent=TRUE)
+}
 
 kBYM = bym(observed ~ offset(logExpected) + poverty, 
 	data= kentucky2, 
-	prior = list(sd=c(0.1, 0.5), propSpatial=c(0.5, 0.5)),
-	num.threads=2, blas.num.threads=2
+	prior = list(sd=c(0.1, 0.5), propSpatial=c(0.5, 0.5))
 )
 
 kBYM$par$summary
