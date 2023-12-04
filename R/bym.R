@@ -183,14 +183,7 @@ bym.data.frame = function(formula, data, adjMat,		region.id,
 		data$region.indexS = data$region.indexI = region.index[data[[region.id]]]
 		
 		
-		cifun = function(pars) {
-			theci = 	stats::pgamma(obj1, shape=pars[1], rate=pars[2],log.p=T)
-			
-			(log(0.025) - theci[1])^2 +
-					(2*(log(0.975) - theci[2]))^2		
-			
-		}
-
+	
 		precPrior = list()
 		
 		# priors
@@ -236,8 +229,17 @@ bym.data.frame = function(formula, data, adjMat,		region.id,
 			startSD = diff(obj1)/4
 			startShape = startSD^2/startMean^2
 			
+	cifun = function(pars, obj) {
+			theci = 	stats::pgamma(obj, shape=pars[1], rate=pars[2],log.p=T)
+			
+			(log(0.025) - theci[1])^2 +
+					(2*(log(0.975) - theci[2]))^2		
+			
+		}
+
+
 			precPrior2=stats::optim(c(startShape,startShape/startMean), cifun, 
-					lower=c(0.000001,0.0000001),method="L-BFGS-B",
+					lower=c(0.000001,0.0000001),method="L-BFGS-B", obj=obj1,
 					control=list(parscale=c(startShape,startShape/startMean)))
 			precPrior[[D]] = precPrior2$par
 			names(precPrior[[D]] ) = c("shape","rate")
@@ -636,7 +638,7 @@ formulaForLincombs = gsub("\\+[[:space:]]+?$|^[[:space:]]?\\+[[:space:]]+", "", 
 		
 		params$propSpatial = list(
 				params.intern = prior$propSpatial,
-				prior = stats::approx(priorProp[,'cDens'], 
+				priorCI = stats::approx(priorProp[,'cDens'], 
 						priorProp[,'x'], c(0.025, 0.975))$y,
 				posterior = inlaRes$marginals.hyperpar[[imname]],
 				prior = as.data.frame(stats::approx(

@@ -1,8 +1,26 @@
 ## ----knitr, include=FALSE-----------------------------------------------------
 require('knitr')
-opts_chunk$set(out.width='0.48\\textwidth', fig.align='default', fig.height=3, fig.width=6)
+opts_chunk$set(out.width='0.48\\textwidth', fig.align='default', fig.height=3, fig.width=5, tidy=FALSE)
+knit_hooks$set(source  =function(x, options) {
+  paste0(c('\\begin{verbatim}', x, '\\end{verbatim}', ''),
+      collapse = '\n')
+})
+knit_hooks$set(chunk = function(x, options) {x})
+hook_output <- function(x, options) {
+  if (knitr:::output_asis(x, options)) return(x)
+  paste0('\\begin{verbatim}\n', x, '\\end{verbatim}\n')
+}
+knit_hooks$set(output = hook_output)
+knit_hooks$set(message = hook_output)
+knit_hooks$set(warning = hook_output)
+knit_hooks$set(plot = function (x, options) 
+    {
+      paste0(knitr::hook_plot_tex(x, options), "\n")
+   })
 
 ## ----inla, include=FALSE------------------------------------------------------
+library('terra')
+library('mapmisc')
 if(requireNamespace('INLA')) {
 	INLA::inla.setOption(num.threads=2)
 	# not all versions of INLA support blas.num.threads
@@ -14,7 +32,7 @@ require('diseasemapping')
 data('kentucky')
 kentucky = terra::unwrap(kentucky)
 
-## ----rates, tidy=TRUE---------------------------------------------------------
+## ----rates--------------------------------------------------------------------
 if(FALSE) {
 	# must have an internet connection to do the following
 	larynxRates= cancerRates("USA", year=1998:2002,site="Larynx")
@@ -31,56 +49,21 @@ if(FALSE) {
 	
 }
 
-## ----smr----------------------------------------------------------------------
-# get rid of under 10's
+## ----getRid-------------------------------------------------------------------
 larynxRates = larynxRates[grep("_(0|5)$",names(larynxRates), invert=TRUE)]
-# compute Sexpected
+
+## ----smr----------------------------------------------------------------------
 kentucky = diseasemapping::getSMR(
     popdata=kentucky, 
     model = larynxRates, 
     casedata=larynx, 
     regionCode="County")
 
-## ----bymGamma, tidy=TRUE------------------------------------------------------
-kBYM = try(bym(
-		formula = observed ~ offset(logExpected) + poverty,
-    data=kentucky,
-    prior = list(sdSpatial=c(0.01, 0.2), sdIndep=c(0.01, 0.2)),
-		region.id="County"))
-
-## ----bymTry, include=FALSE----------------------------------------------------
-if(class(kBYM) == 'try-error') 
-	kBYM = list()
-
-## ----summary------------------------------------------------------------------
-if(!is.null(kBYM$parameters))
-	knitr::kable(kBYM$parameters$summary[,c(1,3,5)], digits=3)
-
-## ----priorPost, fig.cap="gamma priors sd parameters", fig.height=4, fig.width=3, fig.subcap=c("spatial", "indep"), echo=FALSE----
-
-if(!is.null(kBYM$parameters)) {
-	
-plot(kBYM$parameters$sdSpatial$posterior, type='l', 
-		xlim=c(0,1))
-lines(kBYM$parameters$sdSpatial$prior, col='blue')
-legend('topright', lty=1, col=c('black','blue'), legend=c('posterior','prior'))
-
-plot(kBYM$parameters$sdIndep$posterior, type='l', 
-		xlim=c(0,1))
-lines(kBYM$parameters$sdIndep$prior, col='blue')
-legend('topright', lty=1, col=c('black','blue'), legend=c('posterior','prior'))
-} else {
-	plot(1:10, type='n')
-	text(5,5,'inla is not installed')
-	plot(1:10, type='n')
-	text(5,5,'inla is not installed')
-}
-
-## ----bymPc, tidy=TRUE---------------------------------------------------------
+## ----bymPc--------------------------------------------------------------------
 kBYMpc = try(
 bym(
 	formula = observed ~ offset(logExpected) + poverty,
-    kentucky,
+  kentucky,
 	prior = list(
       sd=c(u=1, alpha=0.05), 
       propSpatial = c(u=0.5, alpha=0.8)),
@@ -118,45 +101,27 @@ legend('topright', lty=1, col=c('black','blue'), legend=c('posterior','prior'))
 	text(5,5,'inla is not installed')
 }
 
-## ----maps, fig.cap='Random effects and fitted values', fig.subcap=c('gamma, fitted','pc fitted','gamma random','pc random'), echo=FALSE----
+## ----maps, fig.cap='Random effects and fitted values', fig.subcap=c('fitted','random'), echo=FALSE, out.width='0.9\\textwidth'----
 
 if(require('mapmisc', quietly=TRUE) & !is.null(kBYMpc$parameters)) {
 	
 thecex=0.6	
 	
-colFit = colourScale(kBYM$data$fitted.exp,
-		breaks=6, dec=1, style='equal')
 
-
-plot(kBYM$data, col=colFit$plot)
-legendBreaks('topleft', colFit, cex=thecex)
-
-colFitPc = colourScale(kBYMpc$data$fitted.exp,
-		breaks=colFit$breaks, style='fixed',
-		col=colFit$col)
+colFitPc = colourScale(kBYMpc$data$fitted.exp, breaks=6, dec=1, style='equal')
 
 plot(kBYMpc$data, col=colFitPc$plot)
-legendBreaks('topleft', colFitPc, cex=thecex)
+legendBreaks('left', colFitPc, cex=thecex)
 
-colR = colourScale(kBYM$data$random.mean,
-		breaks=12, dec=-log10(0.05), style='equal')
 
-plot(kBYM$data, col=colR$plot)
-legendBreaks('topleft', colR, cex=thecex)
+colRpc = colourScale(kBYMpc$data$random.mean,breaks=12, dec=-log10(0.05), style='equal')
 
-colRpc = colourScale(kBYMpc$data$random.mean,
-		breaks=colR$breaks, col=colR$col, 
-		style='fixed')
 
 plot(kBYMpc$data, col=colRpc$plot)
-legendBreaks('topleft', colRpc, cex=thecex)
+legendBreaks('left', colRpc, cex=thecex)
 
 
 } else {
-	plot(1:10, type='n')
-	text(5,5,'inla is not installed')
-	plot(1:10, type='n')
-	text(5,5,'inla is not installed')
 	plot(1:10, type='n')
 	text(5,5,'inla is not installed')
 	plot(1:10, type='n')
