@@ -1,4 +1,4 @@
-6d279a9e71f6f42281dc4749e7466173 *DESCRIPTION
+69dc647b9ddaf8038971a7039faad69e *DESCRIPTION
 840e0285a2662981188d32f612259d3f *NAMESPACE
 8b3d3ad8dc19764e2ae4063f45fbebcd *R/bym.R
 b75b984095c816ef2b62b462163a9978 *R/cancer-rates.info.R
@@ -14,8 +14,8 @@ f5ca9b9eb4ee519543c92fc102e20297 *R/formatPopulation.R
 78accbc81d08dd9192ff3aaa2f370182 *R/getSMR.R
 1bd64678e198d3f03b7cfce72ac62f31 *R/getStdRate.R
 160920597a792ad58bb58927835250a7 *R/stbym.R
-67aca0894d1b701f5956113f3fa53fb5 *build/diseasemapping.pdf
-4aa8e9765aeb82c576d0bcbceecd4fdc *build/stage23.rdb
+cd32bf7cbc84cb1d4f70f2f2926ca579 *build/diseasemapping.pdf
+fc461c4bb65263724bd55afbad536d15 *build/stage23.rdb
 38ad349165a771b638ccfec43de3fa7a *build/vignette.rds
 fc20ad656d3e2b1dd03962cc68507f04 *data/casedata.RData
 00597b035e03b96be2837616a0b40bff *data/kentucky.RData
@@ -23,9 +23,9 @@ fc20ad656d3e2b1dd03962cc68507f04 *data/casedata.RData
 639b98a5772fa0adb2a9b5d8b1ef0e5a *data/popdata.RData
 9532914ab79fca4147553cf7a6f4f3fb *data/referencepop.RData
 459dac9fcd83d7f526715348bb7dee0d *inst/CITATION
-bc73719beec4681b8becfcf980d9e369 *inst/doc/bymPc.R
-743773e5c6702394fabb220206552007 *inst/doc/bymPc.Rnw
-4367346639aed883d7565742e8f6641e *inst/doc/bymPc.pdf
+7ed710506fb7b1ef6df39916e88781ba *inst/doc/bymPc.R
+decc44ef28b40c1c2d0c4000baa1d7fa *inst/doc/bymPc.Rnw
+6ca2631d42298bcd4819b5caddebbaa9 *inst/doc/bymPc.pdf
 50e693dc5df15e5bf490d3b157fd7df2 *man/bym.Rd
 b77fb1eb196e99e46677a9afcf2e4f08 *man/cancerRates.Rd
 4499ced888d149e547708f5d1593245c *man/casedata.Rd
@@ -45,4 +45,4 @@ b08b6cb610cf852bff30f0190df7f351 *tests/bym.R
 0713e60cd01ee02a0e19a8111046d577 *tests/cancerRates.R
 8532261f3a5b7862f551f5a173e4802f *tests/getRates.R
 aba4aa807f86fa3e1400999e2f830be4 *tests/getSMR.R
-743773e5c6702394fabb220206552007 *vignettes/bymPc.Rnw
+decc44ef28b40c1c2d0c4000baa1d7fa *vignettes/bymPc.Rnw
